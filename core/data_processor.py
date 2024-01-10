@@ -110,10 +110,3 @@ class DataProcessor:
             data = file.read()
         return OMIMHPOExtractor.extract_omim_hpo_mappings(data)
 
-    # @property
-    # def hp_embeddings(self):
-    #     return self._hp_embeddings
-    #
-    # @property
-    # def disease_to_hps(self):
-    #     return self._disease_to_hps

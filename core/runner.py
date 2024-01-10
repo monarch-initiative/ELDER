@@ -5,6 +5,7 @@ from core.disease_avg_embedding_service import DiseaseAvgEmbeddingService
 from core.hp_embedding_service import HPEmbeddingService
 from core.query_service import QueryService
 from utils.similarity_measures import SimilarityMeasures
+import time
 
 
 class Runner:
@@ -22,10 +23,10 @@ class Runner:
         self.hp_service.process_data()
         self.disease_service.process_data()
 
-    def run_analysis(self, input_hpos, n_results=10): # sim strategy can be going in later
+    def run_analysis(self, input_hpos): # sim strategy can be going in later
         query_service = QueryService(
             data_processor=self.data_processor,
             db_manager=self.db_manager,
             disease_service=self.disease_service,
         )
-        return query_service.query_diseases_by_hpo_terms_using_inbuild_distance_functions(input_hpos, n_results)
+        return query_service.query_diseases_by_hpo_terms_using_inbuild_distance_functions(input_hpos)

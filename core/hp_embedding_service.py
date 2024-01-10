@@ -5,7 +5,7 @@ from core.chromadb_manager import ChromaDBManager
 from core.data_processor import DataProcessor
 from chromadb.types import Collection
 import time
-
+import numpy as np
 
 class HPEmbeddingService(BaseService):
     def process_data(self) -> Collection:
@@ -16,29 +16,34 @@ class HPEmbeddingService(BaseService):
             raise ValueError("HP embeddings data is not initialized")
         if not self.hp_embeddings_collection:
             raise ValueError("HP embeddings collection is not initialized")
-        if self.hp_embeddings_collection is not None:
-            batch_size = 250
-            batch = []
-            upsert_time = 0
+        if self.hp_embeddings_collection:
+            return self.hp_embeddings_collection
 
-            for hp_id, data in self.hp_embeddings.items():
-                embedding_list = data['embeddings']
-                batch.append((hp_id, embedding_list))
+        # if self.hp_embeddings_collection is not None:
+        batch_size = 25
+        batch = []
+        upsert_time = 0
+        # make it a np array before and input this instead getting data from dict
+        np_array = self.hp_embeddings.items()
 
-                if len(batch) >= batch_size:
-                    start = time.time()
-                    self.upsert_batch(batch)
-                    upsert_time += time.time() - start
-                    batch = []
+        for hp_id, data in self.hp_embeddings.items():
+            embedding_list = np.array(data['embeddings'])
+            batch.append((hp_id, embedding_list.tolist()))
 
-            if batch:
+            if len(batch) >= batch_size:
                 start = time.time()
                 self.upsert_batch(batch)
                 upsert_time += time.time() - start
+                batch = []
 
-            print(f"Total time for upsert operations: {upsert_time}s")
+        if batch:
+            start = time.time()
+            self.upsert_batch(batch)
+            upsert_time += time.time() - start
 
-            return self.hp_embeddings_collection
+        print(f"Total time for upsert operations: {upsert_time}s")
+
+        return self.hp_embeddings_collection
 
     def upsert_batch(self, batch):
         ids = [item[0] for item in batch]

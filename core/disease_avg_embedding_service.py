@@ -15,7 +15,11 @@ class DiseaseAvgEmbeddingService(BaseService):
             raise ValueError("disease to hps data is not initialized")
         if not self.disease_avg_embeddings_collection:
             raise ValueError("disease_avg_embeddings collection is not initialized")
-        batch_size = 250
+
+        if self.disease_avg_embeddings_collection:
+            return self.disease_avg_embeddings_collection
+
+        batch_size = 25
         batch = []
         embedding_calc_time = 0
         upsert_time = 0
@@ -24,7 +28,6 @@ class DiseaseAvgEmbeddingService(BaseService):
             start = time.time()
             average_embedding = self.data_processor.calculate_average_embedding(hps, self.hp_embeddings)
             embedding_calc_time += time.time() - start
-
             batch.append((disease, average_embedding.tolist()))
 
             if len(batch) >= batch_size:
