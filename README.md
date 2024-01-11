@@ -1,5 +1,5 @@
-
-python -m main.main
+### Run
+`python -m main.main`
 
 .env:
 
