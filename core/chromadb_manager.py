@@ -19,6 +19,9 @@ class ChromaDBManager:
         self.hpoa = self.get_collection("hpoa")
         self.hp_embeddings_collection = self.get_collection("HPtoEmbeddings") or self.create_collection("HPtoEmbeddings", similarity)
         self.disease_avg_embeddings_collection = self.get_collection("DiseaseAvgEmbeddings") or self.create_collection("DiseaseAvgEmbeddings", similarity)
+        self.clustered_embeddings_collection = self.get_collection("DiseaseOrganEmbeddings") or self.create_collection(
+            "DiseaseOrganEmbeddings", similarity
+        )
 
     def create_collection(self, name: str, similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE):
         try:
