@@ -1,5 +1,5 @@
 import json
-
+from typing import Dict, List
 import pandas as pd
 from pathlib import Path
 from typing import List, Dict
@@ -29,7 +29,7 @@ class DiseaseDataAnalyzer:
         df['ElderScore'] = pd.to_numeric(df['ElderScore'], errors='coerce')
         return df
 
-    def diseases_ranked_higher_in_elder_top_10(self):
+    def diseases_ranked_higher_in_elder_top_10(self) -> Dict:
         self.data['ExomiserScore'] = pd.to_numeric(self.data['ExomiserScore'], errors='coerce')
         self.data['ElderScore'] = pd.to_numeric(self.data['ElderScore'], errors='coerce')
 
@@ -38,7 +38,7 @@ class DiseaseDataAnalyzer:
 
         return better_ranked_diseases
 
-    def diseases_ranked_higher_in_elder(self):
+    def diseases_ranked_higher_in_elder(self) -> List:
         higher_in_elder = self.data[self.data['ElderScore'] > self.data['ExomiserScore']]['Disease'].unique()
         return list(higher_in_elder)
 
@@ -71,7 +71,7 @@ class DiseaseDataAnalyzer:
 
         return pd.DataFrame(comparison_data)
 
-    def _map_diseases_to_phenopackets(self):
+    def _map_diseases_to_phenopackets(self) -> Dict:
         # Assuming 'Disease' and 'FilePath' columns map diseases to phenopacket paths
         return dict(zip(self.data['Disease'], self.data['FilePath']))
 
@@ -99,7 +99,7 @@ class DiseaseDataAnalyzer:
 
         return pd.DataFrame(comparison_data)
 
-    def _extract_disease_from_phenopacket(self, path: str):
+    def _extract_disease_from_phenopacket(self, path: str) -> str:
         with open(path, 'r') as file:
             phenopacket_data = json.load(file)
 
@@ -121,7 +121,7 @@ class DiseaseDataAnalyzer:
         else:
             raise ValueError("Rank type must be either 'exomiser' or 'elder'")
 
-    def list_all_diseases(self):
+    def list_all_diseases(self) -> List:
         return self.data['Disease'].unique().tolist()
 
     def get_file_paths(self):
@@ -142,7 +142,7 @@ class DiseaseDataAnalyzer:
                 })
         return pd.DataFrame(comparison_data)
 
-    def process_phenopackets(self, file_path: str):
+    def process_phenopackets(self, file_path: str) -> List:
         path = Path(file_path)
         file_list = [f for f in path.glob('**/*.json')]
         phenotypic_features = []
@@ -160,15 +160,15 @@ class DiseaseDataAnalyzer:
         with open(file_path, 'r') as file:
             return json.load(file)
 
-    def get_organ_systems(self, hpo_clustering: HPOClustering, phenotype_id: str):
+    def get_organ_systems(self, hpo_clustering: HPOClustering, phenotype_id: str) -> str:
         return hpo_clustering.get_organ_system(phenotype_id)
 
-    def map_disease_to_hp_terms(self, omim_hpo_extractor: OMIMHPOExtractor) -> Dict[str, List[str]]:
+    def map_disease_to_hp_terms(self, omim_hpo_extractor: OMIMHPOExtractor) -> Dict[str, List[str]] :
         file_path = "/Users/carlo/PycharmProjects/chroma_db_playground/phenotype.hpoa"
         data = omim_hpo_extractor.read_data_from_file(file_path)
         return omim_hpo_extractor.extract_omim_hpo_mappings(data)
 
-    def analyze_hp_term_frequency(self, disease_to_hp_mapping: Dict):
+    def analyze_hp_term_frequency(self, disease_to_hp_mapping: Dict) -> Dict:
         hp_term_frequency = {}
         for hp_terms in disease_to_hp_mapping.values():
             for term in hp_terms:
@@ -187,7 +187,7 @@ class DiseaseDataAnalyzer:
     #     plt.title('Top HP Terms by Frequency')
     #     plt.show()
 
-    def get_phenotypes_from_phenopacket(self, phenopacket_path: str):
+    def get_phenotypes_from_phenopacket(self, phenopacket_path: str) -> List:
         phenopacket = self._read_phenopacket(Path(phenopacket_path))
         phenopacket_util = PhenopacketUtil(phenopacket)
         return [feature.type.id for feature in phenopacket_util.observed_phenotypic_features()]
