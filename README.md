@@ -1,5 +1,5 @@
 
-#ELDER
+# ELDER
 Elder is an algorithm that uses text-embeddings for differential diagnosis tasks. It will take any list of `phenotype_term`(`hpo_id`) as input and queries a chromaDB collection 
 consisting of Disease and the average of embeddings of all referring phenotype terms.
 
