@@ -3,10 +3,11 @@ from typing import Dict, List
 import pandas as pd
 from pathlib import Path
 from typing import List, Dict
-from pheval.utils.phenopacket_utils import PhenopacketUtil
+import pheval
+from utils.phenopacket_utils import PhenopacketUtil
 
-from pheval_exomiser.prepare.core.OMIMHPOExtractor import OMIMHPOExtractor
-from pheval_exomiser.prepare.core.hpo_clustering import HPOClustering
+from core.OMIMHPOExtractor import OMIMHPOExtractor
+from core.hpo_clustering import HPOClustering
 import matplotlib.pyplot as plt
 import seaborn as sns
 

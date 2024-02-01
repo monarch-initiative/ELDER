@@ -85,6 +85,7 @@ class QueryService:
         sorted_results = self.process_query_results(query_results=query_results)
         return sorted_results
 
+
     def max_results(self, query_params, n_results, col: Collection, estimated_total_query_results):
         if n_results is None:
             estimated_length = len(estimated_total_query_results["embeddings"])

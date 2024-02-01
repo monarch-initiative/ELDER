@@ -11,6 +11,7 @@ chromadb = "^0.4.20"
 jupyter = "^1.0.0"
 np = "^1.0.2"
 pandas = "^2.1.4"
+pheval = {git = "https://github.com/monarch-initiative/pheval.git"}
 
 
 [build-system]

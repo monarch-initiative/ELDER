@@ -17,6 +17,7 @@ class ChromaDBManager:
         self.client = chromadb.PersistentClient(path=path)
         self.ont_hp = self.get_collection("ont_hp")
         self.hpoa = self.get_collection("hpoa")
+        #DiseaseA : [avegraeVector of Disease]
         self.hp_embeddings_collection = self.get_collection("HPtoEmbeddings") or self.create_collection("HPtoEmbeddings", similarity)
         self.disease_avg_embeddings_collection = self.get_collection("DiseaseAvgEmbeddings") or self.create_collection("DiseaseAvgEmbeddings", similarity)
         self.clustered_embeddings_collection = self.get_collection("DiseaseOrganEmbeddings") or self.create_collection(
