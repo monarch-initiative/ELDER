@@ -10,7 +10,7 @@ By using [pheval](https://github.com/monarch-initiative/pheval) you can compare 
 To do the comparison to the full LIRICAL dataset you will need to take the data from the [pheval-repo](https://github.com/monarch-initiative/pheval) from `/corpora/phenopackets`. Than use `phevals` PhenopacketUtils to iterate over those.
 
 ## Methods
-We implemented different approaches. 
+We implemented differet approaches. 
 1. Averaging each Disease into an Embedding. This works by now the best.
      
 2. Clustering each Disease into their relevant organ systems and average all HP terms in one organ system, to get a relevant representation of each organ_system inside a disease        represented by the set of HP terms that cover this organ system. If HP terms do not cover all organ systems this vector will be multiplied by the embedding of the organ system * -1 for the whole length of the vector.
