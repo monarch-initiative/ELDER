@@ -14,11 +14,8 @@ We implemented different approaches.
 1. Averaging each Disease into an Embedding. This works by now the best.
      
 2. Clustering each Disease into their relevant organ systems and average all HP terms in one organ system, to get a relevant representation of each organ_system inside a disease        represented by the set of HP terms that cover this organ system. If HP terms do not cover all organ systems this vector will be multiplied by the embedding of the organ system * -1 for the whole length of the vector.
-   - **TODO**: it makes sense to play around with values from 0.1 to 0.5 for the start as a representation of -1 * organ_embedding has too much of a negativ effect on the overall representation, thus affects the output immensly, as most disease do not cover more than 3 organ systems.
 
-However, this approach is computationally, for chromaDB, very overwhelming, so querying all 385 observed rare disease patients from the LIRICAL dataset takes about 30h, as each disease-vector will have a dimension of >35k. 
-
-3. Weighting the embeddings by the frequency of each phenotype thats observed inside the `phenotype.hpoa` file
+3. Weighting the embeddings by the frequency of each phenotype observed in the `phenotype.hpoa` file from the Jax Lab.
 
 
 
