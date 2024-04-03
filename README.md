@@ -25,9 +25,5 @@ However, this approach is computationally, for chromaDB, very overwhelming, so q
 ### Run
 `python -m main.main`
 
-### .env: file
-
-`PROJECT_ROOT="path/to/repo"`
-
-and in config.yaml
-add your path to chromaDB with ont_hp and hpoa collection
+### Requirements
+By now needs the generated embeddings via [curate-gpt](https://github.com/iQuxLE/curate-gpt) as explained above.
