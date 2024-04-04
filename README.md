@@ -19,7 +19,7 @@ There is different models to take. 'text-embedding-3-small', 'text-embedding-3-l
 
 5. Creating new embeddings by implementing a new documents embedder into curate-gpt, on which I am working right now. This would incorporate more knowledge into the embedding space instead of just the HP definitions. Updated documents will incorporate the frequencies to any known disease, and enabling curing by embeddings but also text and a scoring system for both. It will take some time to built it without losing data as the token limit for some HPs is reached  very fast when more than 50 diseases are connected. However, a simple averaging batches approach should help for an experiment. Additionally it will be helpful to intergrate information about papers that describe the HPs or diseases and more relations in the DAG, so that the LLM knows what is connected.
 
-The following table contains data of comparisons between the models and also in comparison to prompring.
+The following table contains data of comparisons between the models and also in comparison to prompring. Top 1 to Top 10 shows how much diseases are detected correctly from a cohort of 385 patients with known rare diseases from a set of known phenotypes.
 
 <img width="1505" alt="Screenshot 2024-04-04 at 11 22 50" src="https://github.com/iQuxLE/ELDER/assets/70138474/cfce0a92-6bcb-400b-981d-971050865470">
 
