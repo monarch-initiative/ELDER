@@ -26,8 +26,16 @@ The following table contains data of comparisons between the models and also in 
 It is visible that 'text-embedding-3-large' brings the most value in comparison to SOTA tools like Exomiser. But also it is important to notice, that prompting with GPT-4 Turbo in comparison to 3.5 already doubles the accuracy. In comparison of prompting, using embeddings can even bring more value (up to 120% performance increase).However currently we do not have access to embedding models from GPT-4 Turbo. But we can add more information into the embeddable text and boost the performance, over time so that we end up with a better phenotype driven disease matching algorithm than using semantic similarity of phenotipyc data (Exomiser) and than finding the average information content of MICA (most informative common ancestor) inside the ontology. Just looking at the data with the current models the approach is very promising. Additionally you would not have to worry about hallucinations by self extracting the embeddable text, making the best use of current LLM models.
 
 
-### Run
-`python -m main.main`
+### Run Pheval
+`poetry shell`
+`poetry install`
+`pheval run -i . -t . -r 'ElderPhevalRunner' -o .`
+
+
+### Run Elder only
+
+`pythin -m main.main`
+
 
 ### Requirements
 By now needs the generated embeddings via [curate-gpt](https://github.com/iQuxLE/curate-gpt) as explained above.
