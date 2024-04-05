@@ -1,0 +1,5 @@
+chroma_db_path: "/Users/carlo/Downloads/curate-gpt/new_text_1536"
+#
+## other_db = stagedb_new
+## large_ada = stagedb_new_gpt_4_turbo == text_embedding_large_003
+#DB_PATH = stagedb_text_embedding_small_003

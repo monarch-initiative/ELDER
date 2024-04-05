@@ -1,4 +1,4 @@
-from core.runner import Runner
+from elder_core.runner import Runner
 from utils.similarity_measures import SimilarityMeasures
 import time
 from main.constants import notFullhpListOfOMIM619340, allfromomim619340

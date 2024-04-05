@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "ragexomiser"
+name = "pheval_elder"
 version = "0.1.0"
 description = ""
 authors = ["iQuxLE <ckroll95@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "pheval_elder", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -11,7 +12,10 @@ chromadb = "^0.4.20"
 jupyter = "^1.0.0"
 np = "^1.0.2"
 pandas = "^2.1.4"
-pheval = {git = "https://github.com/monarch-initiative/pheval.git"}
+pheval = "^0.3.2"
+
+[tool.poetry.plugins."pheval.plugins"]
+customrunner = "pheval_elder.runner:ElderPhEvalRunner"
 
 
 [build-system]
