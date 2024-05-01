@@ -21,7 +21,6 @@ There is different models to take. 'text-embedding-3-small', 'text-embedding-3-l
 
 The following table contains data of comparisons between the models and also in comparison to prompring. Top 1 to Top 10 shows how much diseases are detected correctly from a cohort of 385 patients with known rare diseases from a set of known phenotypes.
 
-<img width="1505" alt="Screenshot 2024-04-04 at 11 22 50" src="https://github.com/iQuxLE/ELDER/assets/70138474/cfce0a92-6bcb-400b-981d-971050865470">
 <img width="899" alt="Screenshot 2024-05-01 at 16 15 11" src="https://github.com/iQuxLE/ELDER/assets/70138474/bab48b36-2fd6-4d6b-bdb1-2c0e4bba1a71">
 
 
