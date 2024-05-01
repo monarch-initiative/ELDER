@@ -22,6 +22,8 @@ There is different models to take. 'text-embedding-3-small', 'text-embedding-3-l
 The following table contains data of comparisons between the models and also in comparison to prompring. Top 1 to Top 10 shows how much diseases are detected correctly from a cohort of 385 patients with known rare diseases from a set of known phenotypes.
 
 <img width="1505" alt="Screenshot 2024-04-04 at 11 22 50" src="https://github.com/iQuxLE/ELDER/assets/70138474/cfce0a92-6bcb-400b-981d-971050865470">
+<img width="899" alt="Screenshot 2024-05-01 at 16 15 11" src="https://github.com/iQuxLE/ELDER/assets/70138474/bab48b36-2fd6-4d6b-bdb1-2c0e4bba1a71">
+
 
 It is visible that 'text-embedding-3-large' brings the most value in comparison to SOTA tools like Exomiser. But also it is important to notice, that prompting with GPT-4 Turbo in comparison to 3.5 already doubles the accuracy. In comparison of prompting, using embeddings can even bring more value (up to 120% performance increase).However currently we do not have access to embedding models from GPT-4 Turbo. But we can add more information into the embeddable text and boost the performance, over time so that we end up with a better phenotype driven disease matching algorithm than using semantic similarity of phenotipyc data (Exomiser) and than finding the average information content of MICA (most informative common ancestor) inside the ontology. Just looking at the data with the current models the approach is very promising. Additionally you would not have to worry about hallucinations by self extracting the embeddable text, making the best use of current LLM models.
 
