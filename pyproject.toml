@@ -13,6 +13,7 @@ jupyter = "^1.0.0"
 np = "^1.0.2"
 pandas = "^2.1.4"
 pheval = "^0.3.2"
+wget = "^3.2"
 
 [tool.poetry.plugins."pheval.plugins"]
 customrunner = "pheval_elder.runner:ElderPhEvalRunner"

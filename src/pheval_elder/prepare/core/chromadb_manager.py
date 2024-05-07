@@ -2,17 +2,18 @@ import logging
 from typing import Optional
 import chromadb
 
-from src.pheval_elder.prepare.config import config_loader
-from src.pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.config import config_loader
+from pheval_elder.prepare.config.config_loader import ElderConfig
+from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
 
 
 logger = logging.getLogger(__name__)
 
 
 class ChromaDBManager:
-    def __init__(self, similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE):
-        config = config_loader.load_config()
-        path = config["chroma_db_path"]
+    def __init__(self, config: ElderConfig, similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE):
+        # config = config_loader.load_config()
+        path = config.chroma_db_path
         self.client = chromadb.PersistentClient(path=path)
         self.ont_hp = self.get_collection("ont_hp")
         self.hpoa = self.get_collection("small_hpoa3233")

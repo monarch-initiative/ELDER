@@ -5,9 +5,9 @@ from typing import Dict
 import numpy as np
 from chromadb.types import Collection
 
-from src.pheval_elder.prepare.core.OMIMHPOExtractor import OMIMHPOExtractor
-from src.pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from src.pheval_elder.prepare.core.graph_embedding_extractor import GraphEmbeddingExtractor
+from pheval_elder.prepare.core.OMIMHPOExtractor import OMIMHPOExtractor
+from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.graph_embedding_extractor import GraphEmbeddingExtractor
 
 # from pheval_elder.prepare.elder_core.graph_embedding_extractor import GraphEmbeddingExtractor
 # from pheval_elder.prepare.elder_core.OMIMHPOExtractor import OMIMHPOExtractor

@@ -1,1 +1,7 @@
-chroma_db_path: "/Users/carlo/Downloads/curate-gpt/stagedb"
+tool: elder
+tool_version: 1
+variant_analysis: False
+gene_analysis: False
+disease_analysis: True
+tool_specific_configuration_options:
+  chroma_db_path: "/Users/carlo/Downloads/curate-gpt/stagedb_new"

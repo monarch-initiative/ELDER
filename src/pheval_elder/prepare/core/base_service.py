@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 
 from chromadb.types import Collection
 
-from src.pheval_elder.prepare.core.data_processor import DataProcessor
-from src.pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
+from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
 
 # from pheval_elder.prepare.elder_core.data_processor import DataProcessor
 # from pheval_elder.prepare.elder_core.graph_data_processor import GraphDataProcessor

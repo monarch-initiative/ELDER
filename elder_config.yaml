@@ -1,4 +1,4 @@
-chroma_db_path: "/Users/carlo/Downloads/curate-gpt/new_text_1536"
+chroma_db_path: "/Users/carlo/Downloads/curate-gpt/new_stagedb"
 #
 ## other_db = stagedb_new
 ## large_ada = stagedb_new_gpt_4_turbo == text_embedding_large_003

@@ -5,11 +5,11 @@ import numpy as np
 from chromadb.types import Collection
 from tqdm import tqdm
 
-from src.pheval_elder.prepare.core.base_service import BaseService
-from src.pheval_elder.prepare.core.data_processor import DataProcessor
-from src.pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
-from src.pheval_elder.prepare.core.hpo_clustering import HPOClustering
-from src.pheval_elder.prepare.core.organ_systems import OrganSystems
+from pheval_elder.prepare.core.base_service import BaseService
+from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
+from pheval_elder.prepare.core.hpo_clustering import HPOClustering
+from pheval_elder.prepare.core.organ_systems import OrganSystems
 
 
 # from pheval_elder.prepare.elder_core.base_service import BaseService

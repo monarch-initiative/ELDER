@@ -3,7 +3,7 @@ import time
 import numpy as np
 from chromadb.types import Collection
 
-from src.pheval_elder.prepare.core.base_service import BaseService
+from pheval_elder.prepare.core.base_service import BaseService
 
 
 # from pheval_elder.prepare.elder_core.base_service import BaseService
