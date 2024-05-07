@@ -9,6 +9,7 @@ from pheval.utils.file_utils import all_files
 from pheval.utils.phenopacket_utils import PhenopacketUtil, phenopacket_reader
 from tqdm import tqdm
 
+from pheval_elder.prepare.config.config_loader import ElderConfig
 from pheval_elder.prepare.core.elder import ElderRunner
 from pheval_elder.prepare.simple_service import SimpleService
 from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
@@ -28,9 +29,10 @@ class ElderPhEvalRunner(PhEvalRunner):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        config = ElderConfig.parse_obj(self.input_dir_config.tool_specific_configuration_options)
         self.simple_service = SimpleService()
-        self.simple_runner = ElderRunner(
-            similarity_measure=SimilarityMeasures.COSINE)
+        self.simple_runner = ElderRunner(config=config,
+                                         similarity_measure=SimilarityMeasures.COSINE)
         self.current_file_name = None
 
     def prepare(self):

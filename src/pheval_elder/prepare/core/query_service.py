@@ -2,17 +2,17 @@ from typing import Any, List
 from chromadb.types import Collection
 from deprecation import deprecated
 
-from src.pheval_elder.prepare.core import hpo_clustering
-from src.pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from src.pheval_elder.prepare.core.data_processor import DataProcessor
-from src.pheval_elder.prepare.core.disease_avg_embedding_service import DiseaseAvgEmbeddingService
-from src.pheval_elder.prepare.core.disease_clustered_emb_service import DiseaseClusteredEmbeddingService
-from src.pheval_elder.prepare.core.disease_weighted_avg_embedding_service import DiseaseWeightedAvgEmbeddingService
-from src.pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
-from src.pheval_elder.prepare.core.graph_deepwalk_avg_service import GraphDeepwalkAverageEmbeddingService
-from src.pheval_elder.prepare.core.graph_deepwalk_weighted_service import GraphDeepwalkWeightedEmbeddingService
-from src.pheval_elder.prepare.core.graph_line_avg_service import GraphLineAverageEmbeddingService
-from src.pheval_elder.prepare.core.graph_line_weighted_service import GraphLineWeightedEmbeddingService
+from pheval_elder.prepare.core import hpo_clustering
+from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.disease_avg_embedding_service import DiseaseAvgEmbeddingService
+from pheval_elder.prepare.core.disease_clustered_emb_service import DiseaseClusteredEmbeddingService
+from pheval_elder.prepare.core.disease_weighted_avg_embedding_service import DiseaseWeightedAvgEmbeddingService
+from pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
+from pheval_elder.prepare.core.graph_deepwalk_avg_service import GraphDeepwalkAverageEmbeddingService
+from pheval_elder.prepare.core.graph_deepwalk_weighted_service import GraphDeepwalkWeightedEmbeddingService
+from pheval_elder.prepare.core.graph_line_avg_service import GraphLineAverageEmbeddingService
+from pheval_elder.prepare.core.graph_line_weighted_service import GraphLineWeightedEmbeddingService
 
 
 # from pheval_elder.prepare.elder_core import hpo_clustering
