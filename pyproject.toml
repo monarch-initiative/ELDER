@@ -8,12 +8,14 @@ packages = [{ include = "pheval_elder", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-chromadb = "^0.4.20"
+chromadb = "0.5.16"
 jupyter = "^1.0.0"
 np = "^1.0.2"
 pandas = "^2.1.4"
 pheval = "^0.3.2"
 wget = "^3.2"
+numpy = "2.1.2"
+api = "^0.0.7"
 
 [tool.poetry.plugins."pheval.plugins"]
 customrunner = "pheval_elder.runner:ElderPhEvalRunner"
