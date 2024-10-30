@@ -1,23 +1,16 @@
-from pydantic import BaseModel, Field
+import os
+import yaml
+from pathlib import Path
 
+def load_config():
+    project_root = Path(__file__).resolve().parents[4]
+    config_path = os.path.join(project_root, 'elder_config.yaml')
+    with open(config_path, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
 
-class ElderConfig(BaseModel):
-    """
-    Class for defining ELDER configurations in tool_specific_configurations field,
-    within the input_dir config.yaml.
+def main():
+    load_config()
 
-    Args:
-        chroma_db_path (str): Path to ChromaDB path.
-    """
-    chroma_db_path: str = Field(...)
-
-# def load_config():
-#     project_root = os.environ.get('PROJECT_ROOT')
-#     print(f"project root{project_root}")
-#     config_path = os.path.join(project_root, 'elder_config.yaml')
-#     print(config_path)
-#
-#     with open(config_path, 'r') as file:
-#         config = yaml.safe_load(file)
-#
-#     return config
+if __name__ == "__main__":
+    main()
