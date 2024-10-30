@@ -117,17 +117,15 @@ class OMIMHPOExtractor:
             if not header_found:
                 continue
 
-            # parts = line.split("\t")
             parts = [part.strip() for part in line.split("\t")]
 
             if len(parts) < 8:
-                # Print only the lines that do not match the expected format
-                # print("Unexpected line format:", line)
                 continue
 
             omim_id, qualifier, hpo_id, frequency = parts[0], parts[2], parts[3], parts[7]
             if not omim_id or not hpo_id:
                 continue
+
             # Determine frequency as proportion, default to 0.5 if not in special frequencies
             if frequency in special_frequencies:
                 frequency_proportion = special_frequencies[frequency] / 100
@@ -141,63 +139,8 @@ class OMIMHPOExtractor:
             if qualifier != "NOT":
                 omim_hpo_dict.setdefault(omim_id, {})[hpo_id] = frequency_proportion
 
-            # elif qualifier == "NOT" and frequency:
-            #     omim_hpo_dict.setdefault(omim_id, {})[hpo_id] = frequency_proportion
-
         return omim_hpo_dict
 
-    # @staticmethod
-    # def extract_omim_hpo_mappings_with_frequencies_2(data) -> Dict:
-    #     """
-    #             Extracts OMIM to HPO mappings from the provided data.
-    #
-    #             :param data: String containing the data with OMIM and HPO information.
-    #             :return: Dictionary with OMIM IDs as keys and lists of HPO IDs as values.
-    #             """
-    #     omim_hpo_dict = {}
-    #     lines = data.split("\n")
-    #     header_found = False
-    #     # Frequency mapping for special HPO terms referring to freq in DAG
-    #     # TODO: those are ranges, i hardcoded for specific values inside those ranges, adapt ...
-    #     special_frequencies = {
-    #         "HP:0040281": 80.0,  # Very frequent
-    #         "HP:0040283": 20.0,  # Occasional
-    #         "HP:0040280": 100.0,  # Obligate
-    #         "HP:0040285": 0.0,  # Excluded
-    #         "HP:0040282": 50.0,  # Frequent
-    #         "HP:0040284": 1.0  # Very rare
-    #     }
-    #
-    #     for line in lines:
-    #         if line.startswith("#"):
-    #             continue
-    #         if not header_found:
-    #             header_found = True
-    #             continue
-    #
-    #         parts = line.split("\t")
-    #         if len(parts) < 8:
-    #             # Print only the lines that do not match the expected format
-    #             # print("Unexpected line format:", line)
-    #             continue
-    #
-    #         omim_id, qualifier, hpo_id, frequency = parts[0], parts[2], parts[3], parts[7]
-    #
-    #         # Determine frequency as proportion, default to 0.5 if not in special frequencies
-    #         if frequency in special_frequencies:
-    #             frequency_proportion = special_frequencies[frequency] / 100
-    #         elif '/' in frequency:
-    #             numerator, denominator = map(float, frequency.split('/'))
-    #             frequency_proportion = numerator / denominator
-    #         else:
-    #             frequency_proportion = 0.5
-    #
-    #         omim_hpo_dict.setdefault(omim_id, {})[hpo_id] = frequency_proportion
-    #         if qualifier == "NOT" and !frequency:
-    #
-    #
-    #
-    #     return omim_hpo_dict
 
     @staticmethod
     def read_data_from_file(file_path):

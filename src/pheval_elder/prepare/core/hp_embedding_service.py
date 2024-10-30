@@ -1,14 +1,12 @@
 import time
 
 import numpy as np
+from attr import dataclass
 from chromadb.types import Collection
 
 from pheval_elder.prepare.core.base_service import BaseService
 
-
-# from pheval_elder.prepare.elder_core.base_service import BaseService
-
-
+@dataclass
 class HPEmbeddingService(BaseService):
     def process_data(self) -> Collection:
         """
@@ -25,8 +23,6 @@ class HPEmbeddingService(BaseService):
         batch_size = 100
         batch = []
         upsert_time = 0
-        # make it a np array before and input this instead getting data from dict
-        # np_array = self.hp_embeddings.items()
 
         for hp_id, data in self.hp_embeddings.items():
             embedding_list = np.array(data["embeddings"])

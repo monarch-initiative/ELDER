@@ -1,4 +1,5 @@
 import time
+from dataclasses import dataclass
 
 import numpy as np
 from chromadb.types import Collection
@@ -6,29 +7,16 @@ from tqdm import tqdm
 
 from pheval_elder.prepare.core.base_service import BaseService
 from pheval_elder.prepare.core.data_processor import DataProcessor
-from pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
 
 
-# from pheval_elder.prepare.elder_core.base_service import BaseService
-# from pheval_elder.prepare.elder_core.data_processor import DataProcessor
-# from tqdm import tqdm
-# from multiprocessing import Pool
-#
-# from pheval_elder.prepare.elder_core.graph_data_processor import GraphDataProcessor
-
-
+@dataclass
 class DiseaseWeightedAvgEmbeddingService(BaseService):
     """
     upsert averaged embeddings from hp_embeddings (cached dict from ont_hp collection) that are connected to the
     relevant disease from disease_to_hps (cached dict from hpoa) into the disease_avg_embeddings_collection that
     contains disease and the average embeddings of the correlating hp terms
     """
-
-    def __init__(self, data_processor: DataProcessor, graph_data_processor: GraphDataProcessor):
-        super().__init__(
-            data_processor=data_processor,
-            graph_data_processor=graph_data_processor
-        )
+    data_processor: DataProcessor
 
     def process_data(self) -> Collection:
         if not self.disease_to_hps_with_frequencies_dp:
@@ -43,10 +31,7 @@ class DiseaseWeightedAvgEmbeddingService(BaseService):
         # TODO: num_disease should be batch_size as we will make a new one every batch ?
         num_diseases = len(self.disease_to_hps_with_frequencies_dp)
 
-        all_embeddings = np.zeros((batch_size, 1536))  # Replace 1536 with better EmbeddingsSize?
-
-        # Initialize an array to store disease IDs
-        # Use dtype=object for flexibility with string lengths and special characters, avoiding truncation issues
+        all_embeddings = np.zeros((batch_size, 1536))  # Embedding Size
         all_diseases = np.empty(batch_size, dtype=object)
 
         current_index = 0
