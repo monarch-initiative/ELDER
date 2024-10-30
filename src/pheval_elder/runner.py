@@ -29,7 +29,7 @@ class ElderPhEvalRunner(PhEvalRunner):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        config = ElderConfig.parse_obj(self.input_dir_config.tool_specific_configuration_options)
+        config = ElderConfig.model_validate(self.input_dir_config.tool_specific_configuration_options)
         self.simple_service = SimpleService()
         self.simple_runner = ElderRunner(config=config,
                                          similarity_measure=SimilarityMeasures.COSINE)

@@ -1,185 +1,32 @@
+from dataclasses import dataclass
 from typing import Any, List
 from chromadb.types import Collection
 from deprecation import deprecated
 
-from pheval_elder.prepare.core import hpo_clustering
 from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
 from pheval_elder.prepare.core.data_processor import DataProcessor
 from pheval_elder.prepare.core.disease_avg_embedding_service import DiseaseAvgEmbeddingService
-from pheval_elder.prepare.core.disease_clustered_emb_service import DiseaseClusteredEmbeddingService
 from pheval_elder.prepare.core.disease_weighted_avg_embedding_service import DiseaseWeightedAvgEmbeddingService
-from pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
-from pheval_elder.prepare.core.graph_deepwalk_avg_service import GraphDeepwalkAverageEmbeddingService
-from pheval_elder.prepare.core.graph_deepwalk_weighted_service import GraphDeepwalkWeightedEmbeddingService
-from pheval_elder.prepare.core.graph_line_avg_service import GraphLineAverageEmbeddingService
-from pheval_elder.prepare.core.graph_line_weighted_service import GraphLineWeightedEmbeddingService
 
 
-# from pheval_elder.prepare.elder_core import hpo_clustering
-# from pheval_elder.prepare.elder_core.chromadb_manager import ChromaDBManager
-# from pheval_elder.prepare.elder_core.data_processor import DataProcessor
-# from pheval_elder.prepare.elder_core.disease_avg_embedding_service import DiseaseAvgEmbeddingService
-# from pheval_elder.prepare.elder_core.disease_clustered_emb_service import DiseaseClusteredEmbeddingService
-# from pheval_elder.prepare.elder_core.disease_weighted_avg_embedding_service import DiseaseWeightedAvgEmbeddingService
-# from pheval_elder.prepare.elder_core.graph_data_processor import GraphDataProcessor
-# from pheval_elder.prepare.elder_core.graph_deepwalk_avg_service import GraphDeepwalkAverageEmbeddingService
-# from pheval_elder.prepare.elder_core.graph_deepwalk_weighted_service import GraphDeepwalkWeightedEmbeddingService
-# from pheval_elder.prepare.elder_core.graph_line_weighted_service import GraphLineWeightedEmbeddingService
-# from pheval_elder.prepare.elder_core.graph_line_avg_service import GraphLineAverageEmbeddingService
-
-
+@dataclass
 class QueryService:
-    def __init__(
-        self,
-        data_processor: DataProcessor,
-        graph_data_processor: GraphDataProcessor,
-        db_manager: ChromaDBManager,
-        average_llm_embedding_service: DiseaseAvgEmbeddingService,
-        weighted_average_llm_embedding_service: DiseaseWeightedAvgEmbeddingService,
-        organ_vector_service: DiseaseClusteredEmbeddingService,
-        average_line_graph_embedding_service: GraphLineAverageEmbeddingService,
-        average_deepwalk_graph_embedding_service: GraphDeepwalkAverageEmbeddingService,
-        weighted_average_line_graph_embedding_service: GraphLineWeightedEmbeddingService,
-        weighted_average_deepwalk_graph_embedding_service: GraphDeepwalkWeightedEmbeddingService,
-        similarity_strategy=None,
-    ):
-        self.db_manager = db_manager
-        self.data_processor = data_processor
-        self.graph_data_processor = graph_data_processor
-        self.similarity_strategy = similarity_strategy
-        self.hp_embeddings = data_processor.hp_embeddings
-        self.disease_to_hps_from_omim = data_processor.disease_to_hps_with_frequencies
-        self.disease_service = average_llm_embedding_service
-        self.hpo_clustering = hpo_clustering
-        self.disease_organ_service = organ_vector_service
-        self.disease_weighted_service = weighted_average_llm_embedding_service
-        self.average_line_graph_embedding_service = average_line_graph_embedding_service
-        self.average_deepwalk_graph_embedding_service = average_deepwalk_graph_embedding_service
-        self.weighted_average_line_graph_embedding_service = weighted_average_line_graph_embedding_service
-        self.weighted_average_deepwalk_graph_embedding_service = weighted_average_deepwalk_graph_embedding_service
 
-    '''
-    The following are all query functions using LINE Graph embeddings
-    contains: 1.average, 2.weighted
-    '''
+    data_processor: DataProcessor
+    db_manager: ChromaDBManager
+    average_llm_embedding_service: DiseaseAvgEmbeddingService
+    weighted_average_llm_embedding_service: DiseaseWeightedAvgEmbeddingService
+    similarity_strategy=None,
 
-    def query_for_average_line_graph_embeddings_collection_top10(
-        self,
-        hpo_ids: List[str],
-        n_results: int = 10
-    ) -> list[Any]:
-        avg_embedding = self.graph_data_processor.calculate_average_line_graph_embeddings(
-                                                                        hpo_ids,
-                                                                        )
-        query_params = {
-            "query_embeddings": [avg_embedding.tolist()],
-            "include": ["embeddings", "distances"],
-            "n_results": n_results
-        }
-        query_results = (self.average_line_graph_embedding_service.disease_avg_line_graph_embeddings_collection
-                         .query(**query_params))
-        sorted_results = self.process_query_results(query_results=query_results)
-        return sorted_results
+    def __post_init__(self):
+        self.db_manager = self.db_manager
+        self.data_processor = self.data_processor
+        self.similarity_strategy = self.similarity_strategy
+        self.hp_embeddings = self.data_processor.hp_embeddings
+        self.disease_to_hps_from_omim = self.data_processor.disease_to_hps_with_frequencies
+        self.disease_service = self.average_llm_embedding_service
+        self.disease_weighted_service = self.weighted_average_llm_embedding_service
 
-    def query_for_weighted_line_graph_embeddings_collection_top10(
-        self,
-        hpo_ids: List[str],
-        n_results: int = 10
-    ) -> list[Any]:
-        print("query")
-        avg_embedding = self.graph_data_processor.calculate_average_line_graph_embeddings(
-                                                                        hpo_ids,
-                                                                        )
-        print(type(avg_embedding))
-        print("avg_emb_list_done")
-        query_params = {
-            "query_embeddings": avg_embedding,
-            "include": ["embeddings", "distances"],
-            "n_results": n_results
-        }
-        query_results = (self.weighted_average_line_graph_embedding_service.disease_weighted_avg_line_graph_embeddings_collection
-                         .query(**query_params))
-        sorted_results = self.process_query_results(query_results=query_results)
-        return sorted_results
-
-    '''
-    The following are all query functions using DEEPWALK Graph embeddings
-    contains: 1.average, 2.weighted
-    '''
-
-    def query_for_average_deepwalk_graph_embeddings_collection_top10(
-        self,
-        hpo_ids: List[str],
-        n_results: int = 10
-    ) -> list[Any]:
-        avg_embedding = self.graph_data_processor.calculate_average_deepwalk_graph_embeddings(
-                                                                        hpo_ids,
-                                                                        )
-        query_params = {
-            "query_embeddings": avg_embedding,
-            "include": ["embeddings", "distances"],
-            "n_results": n_results
-        }
-        query_results = (self.average_deepwalk_graph_embedding_service.disease_avg_deepwalk_graph_embeddings_collection
-                         .query(**query_params))
-        sorted_results = self.process_query_results(query_results=query_results)
-        return sorted_results
-
-    def query_for_weighted_deepwalk_graph_embeddings_collection_top10(
-        self,
-        hpo_ids: List[str],
-        n_results: int = 10
-    ) -> list[Any]:
-        avg_embedding = self.graph_data_processor.calculate_average_deepwalk_graph_embeddings(
-                                                                        hpo_ids,
-                                                                        )
-        query_params = {
-            "query_embeddings": [avg_embedding.tolist()],
-            "include": ["embeddings", "distances"],
-            "n_results": n_results
-        }
-        query_results = (self.weighted_average_deepwalk_graph_embedding_service.disease_avg_deepwalk_graph_embeddings_collection
-                         .query(**query_params))
-        sorted_results = self.process_query_results(query_results=query_results)
-        return sorted_results
-
-
-    '''
-    The following is for the organ vector approach using LLM embeddings:
-    '''
-
-    def query_for_organ_vector_approach_llm_embeddings_collection_top10_only(
-        self,
-        hpo_ids: List[str],
-        n_results: int = 10
-    ) -> list[Any]:
-        """
-        Queries the 'DiseaseClusteredEmbeddings' collection for diseases closest to the clustered embeddings of given HPO terms.
-
-        :param hpo_ids: List of HPO term IDs.
-        :param n_results: Optional number of results to return. Returns all if None.
-        :return: List of diseases sorted by closeness to the clustered HPO embeddings.
-        """
-        avg_embedding = self.disease_organ_service.compute_organ_embeddings_more_efficient(hpo_ids)
-        if avg_embedding is None:
-            raise ValueError("No valid embeddings found for provided HPO terms.")
-
-        query_params = {
-            "query_embeddings": [avg_embedding.tolist()],
-            "include": ["embeddings", "distances"]
-        }
-
-        if n_results is None:
-            estimated_total = len(
-                self.disease_organ_service.clustered_new_embeddings_collection.get(include=['metadatas']))
-            max_n_results = self.binary_search_max_results_nocol(query_params, 11700, estimated_total)
-            query_params["n_results"] = max_n_results
-        else:
-            query_params["n_results"] = n_results
-
-        query_results = self.disease_organ_service.clustered_new_embeddings_collection.query(**query_params)
-        sorted_results = self.process_query_results(query_results=query_results)
-        return sorted_results
 
     '''
     The following is for the weighted average approach using LLM embeddings:

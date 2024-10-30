@@ -1,80 +1,66 @@
 import logging
-from typing import Optional
+from typing import Optional, Dict
+
+from chromadb import ClientAPI as API
 import chromadb
+from dataclasses import dataclass, field
+from chromadb.api.models.Collection import Collection
+from chromadb.types import Collection
 
 from pheval_elder.prepare.config import config_loader
-from pheval_elder.prepare.config.config_loader import ElderConfig
 from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
 
 
 logger = logging.getLogger(__name__)
 
-
+@dataclass
 class ChromaDBManager:
-    def __init__(self, config: ElderConfig, similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE):
-        # config = config_loader.load_config()
-        path = config.chroma_db_path
-        self.client = chromadb.PersistentClient(path=path)
-        self.ont_hp = self.get_collection("ont_hp")
-        self.hpoa = self.get_collection("small_hpoa3233")
+    client: API = None
+    path: str = None
+    ontology: str = field(default="hp")
+    avg_collection_name: str = field(default="average")
+    avg_weighted_collection_name: str = field(default="weighted_average")
+    model_shorthand: str = field(default="ada-002")
+    ont_hp: Collection = None
+    similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE
+    hp_embeddings_collection: Collection = None
+    disease_avg_embeddings_collection: Collection = None
+    disease_weighted_avg_embeddings_collection: Collection = None
 
-        self.hp_embeddings_collection = self.get_collection("small_hpo") or self.create_collection(
-            "small_hpo", similarity
+    def __post_init__(self):
+        print("post-init executed")
+        if self.path is None:
+            config = config_loader.load_config()
+            self.path = config["chroma_db_path"]
+            self.client = chromadb.PersistentClient(path=self.path)
+        if self.ont_hp is None:
+            self.ont_hp = self.client.get_collection("label_hpo")
+
+
+        self.hp_embeddings_collection = self.get_or_create_collection(
+            f"{self.model_shorthand}_{self.ontology}"
         )
-        self.disease_avg_embeddings_collection = self.get_collection("small_average") or self.create_collection(
-            "small_average", similarity
+        self.disease_avg_embeddings_collection = self.get_or_create_collection(
+            f"{self.model_shorthand}_{self.avg_collection_name}"
         )
-        self.clustered_embeddings_collection = self.get_collection("small_DiseaseOrganEmbeddings") or self.create_collection(
-            "small_DiseaseOrganEmbeddings", similarity
+        self.disease_weighted_avg_embeddings_collection = self.get_or_create_collection(
+            f"{self.model_shorthand}_{self.avg_weighted_collection_name}"
         )
 
-        self.organ_embeddings_collection = self.get_collection("small_Organ_Emb_28_02_24") or self.create_collection("small_Organ_Emb_28_02_24", similarity)
-        # TODO: THIS 2 NEW ONES CREATED FOR USING THE OMIM DICT FROM phenotype.hpoa instead hpoa collection
-        self.disease_new_avg_embeddings_collection = self.get_collection(
-            "small_DiseaseNewAvgEmbeddingsNew") or self.create_collection(
-            "small_DiseaseNewAvgEmbeddingsNew", similarity
-        )
-        self.clustered_new_embeddings_collection = self.get_collection(
-            "small_Organ_Emb_0.05") or self.create_collection(
-            "small_Organ_Emb_0.05", similarity  # THIS FOR TIMES - 0.1*
-        )
-        self.disease_weighted_avg_embeddings_collection = self.get_collection(
-            "small_model_weighted_average") or self.create_collection(
-            "small_model_weighted_average", similarity)
-
-        # The following two are for graph embeddings on WEIGHTED AVERAGE calculations
-        self.disease_weighted_avg_line_graph_embeddings_collection = self.get_collection(
-            "small_disease_weighted_avg_line_graph_embeddings_collection") or self.create_collection(
-            "small_disease_weighted_avg_line_graph_embeddings_collection", similarity)
-        self.disease_weighted_avg_deepwalk_graph_embeddings_collection = self.get_collection(
-            "small_disease_weighted_avg_deepwalk_graph_embeddings_collection") or self.create_collection(
-            "small_disease_weighted_avg_deepwalk_graph_embeddings_collection", similarity)
-
-        # The following two are for graph embeddings for normal AVERAGE calculations
-        self.disease_avg_line_graph_embeddings_collection = self.get_collection(
-            "small_disease_avg_line_graph_embeddings_collection") or self.create_collection(
-            "small_disease_avg_line_graph_embeddings_collection", similarity)
-        self.disease_avg_deepwalk_graph_embeddings_collection = self.get_collection(
-            "small_disease_avg_deepwalk_graph_embeddings_collection") or self.create_collection(
-            "small_disease_avg_deepwalk_graph_embeddings_collection", similarity)
-
-
-
-    def create_collection(self, name: str, similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE):
+    def get_or_create_collection(self, name: str):
         try:
-            similarity_str_value = similarity.value if similarity else SimilarityMeasures.COSINE.value
-            collection = self.client.create_collection(name=name, metadata={"hnsw:space": similarity_str_value})
+            similarity_str_value = self.similarity.value if self.similarity else SimilarityMeasures.COSINE.value
+            collection = self.client.get_or_create_collection(
+                name=name,
+                metadata={
+                    "hnsw:space": similarity_str_value,
+                    "hnsw:search_ef": 800,
+                    "hnsw:construction_ef": 200,
+                    "hnsw:M": 16
+                })
             return collection
-        except chromadb.db.base.UniqueConstraintError:
-            logger.info(f"Collection {name} already exists")
-            return None
-
-    def get_collection(self, name: str):
-        try:
-            return self.client.get_collection(name)
         except Exception as e:
-            logger.info(f"Error getting collection {name}: {str(e)}")
-            return None
+            raise ValueError(f"Error getting/creating collection {name}: {str(e)}")
 
     def list_collections(self):
         return self.client.list_collections()
