@@ -13,7 +13,6 @@ To do the comparison to the full LIRICAL dataset you will need to take the data 
 1. Averaging each Disease into an Embedding space, by averaging the corresponding HP terms-embeddings given by curateGPT using known HPOA data.
 There is different models to take. 'text-embedding-3-small', 'text-embedding-3-large', and 'text-embedding-ada-002'. The current repo uses ada-002, currently I am implementing data from large. Large is the most promissing, by now and pushes the accuracy by 5% on average.
      
-3. Clustering each Disease into their relevant organ systems and average all HP terms in one organ system, to get a relevant representation of each organ_system inside a disease        represented by the set of HP terms that cover this organ system. If HP terms do not cover all organ systems this vector will be multiplied by the embedding of the organ system * -1 for the whole length of the vector.
 
 4. Weighting the embeddings by the frequency of each phenotype observed in the `phenotype.hpoa` file from the Jax Lab.
 
