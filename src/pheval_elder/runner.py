@@ -1,3 +1,5 @@
+import os
+import shutil
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -8,12 +10,10 @@ from pheval.runners.runner import PhEvalRunner
 from pheval.utils.file_utils import all_files
 from pheval.utils.phenopacket_utils import PhenopacketUtil, phenopacket_reader
 from tqdm import tqdm
-
-from pheval_elder.prepare.config.config_loader import ElderConfig
 from pheval_elder.prepare.core.elder import ElderRunner
-from pheval_elder.prepare.simple_service import SimpleService
 from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
 
+# root = Path(__file__).parents[2]
 
 @dataclass
 class ElderPhEvalRunner(PhEvalRunner):
@@ -26,33 +26,26 @@ class ElderPhEvalRunner(PhEvalRunner):
     config_file: Path
     version: str
     results: List[Any] = field(default_factory=list)
+    results_path: str = None
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        config = ElderConfig.model_validate(self.input_dir_config.tool_specific_configuration_options)
-        self.simple_service = SimpleService()
-        self.simple_runner = ElderRunner(config=config,
-                                         similarity_measure=SimilarityMeasures.COSINE)
+        self.elder_runner = ElderRunner(
+            similarity_measure=SimilarityMeasures.COSINE,
+            collection_name="lrd_hpo",
+            strategy="avg",
+            embedding_model="large"
+        )
         self.current_file_name = None
 
     def prepare(self):
         """prepare"""
-        print("preparing and working")
-        self.simple_service.greet()
-        start_init = time.time()
-        self.simple_runner.initialize_data()
-        init_time = time.time() - start_init
-        print("initialized simple runner")
-        print(init_time)
-        start_setup = time.time()
-        self.simple_runner.setup_collections()
-        print("set up collections")
-        setup_time = time.time() - start_setup
-        print(setup_time)
+        self.elder_runner.initialize_data()
+        self.elder_runner.setup_collections()
 
     def run(self):
-        print("Phenopacket analysis")
-        path = Path("/Users/carlo/Carlo/pheval/pheval/corpora/lirical/default/phenopackets")
+        path = Path("/Users/carlo/pheval/corpora/lirical/default/phenopackets")
         file_list = all_files(path)
         print(f"Processing {len(file_list)} files...")
         for i, file_path in tqdm(enumerate(file_list, start=1), total=385):
@@ -65,34 +58,39 @@ class ElderPhEvalRunner(PhEvalRunner):
             observed_phenotypes_hpo_ids = [
                 observed_phenotype.type.id for observed_phenotype in observed_phenotypes
             ]
-            print(observed_phenotypes_hpo_ids)
+            # print(observed_phenotypes_hpo_ids)
 
-            if self.simple_runner is not None:
-                self.results = self.simple_runner.run_analysis(observed_phenotypes_hpo_ids)
+            if self.elder_runner is not None:
+                self.results = self.elder_runner.run_analysis(observed_phenotypes_hpo_ids)
                 # print("Running with custom pheval runner")
-                self.postpost_process()  # Call post_process here for each file
+                self.post_process()  # Call post_process here for each file
             else:
                 print("Main system is not initialized")
 
     def post_process(self):
-        print("i do i do u do")
-
-    def postpost_process(self):
         """post_process"""
-        print("post processing")
         if self.input_dir_config.disease_analysis and self.results:
             disease_results = self.create_disease_results(self.results)
             output_file_name = f"{self.current_file_name}_disease_results.tsv"
+            add_sub_dir = self.pheval_disease_results_dir / "pheval_disease_results/"
+            dest_dir = self.pheval_disease_results_dir / self.elder_runner.results_dir_name / self.elder_runner.results_sub_dir
+            add_sub_dir.mkdir(parents=True, exist_ok=True)
+            dest_dir.mkdir(parents=True, exist_ok=True)
             generate_pheval_result(
                 pheval_result=disease_results,
-                sort_order_str="ASCENDING",
+                sort_order_str="DESCENDING",
                 output_dir=self.pheval_disease_results_dir,
                 tool_result_path=Path(output_file_name),
             )
-            print(f"generated pheval results for {output_file_name}")
+            for file in add_sub_dir.iterdir():
+                if file.is_file():
+                    shutil.copy(file, dest_dir / file.name)
         else:
             print("No results to process")
 
+            # somehow pheval_disease_results is always added after but not created
+            # print(f"\n\n{results_path}\n\n")
+            # print(self.pheval_disease_results_dir)
     @staticmethod
     def create_disease_results(query_results):
         return [
