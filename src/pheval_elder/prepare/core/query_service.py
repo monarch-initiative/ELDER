@@ -44,7 +44,9 @@ class QueryService:
         :param n_results: Optional number of results to return. Returns all if None.
         :return: List of diseases sorted by closeness to the average HPO embeddings.
         """
+
         avg_embedding = self.data_processor.calculate_average_embedding(hps,self.hp_embeddings)
+
         if avg_embedding is None:
             raise ValueError("No valid embeddings found for provided HPO terms.")
 

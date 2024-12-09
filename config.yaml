@@ -4,4 +4,5 @@ variant_analysis: False
 gene_analysis: False
 disease_analysis: True
 tool_specific_configuration_options:
-  chroma_db_path: "/Users/carlo/chromadb/ada-002-hp"
+  chroma_db_path: "/Users/carlo/chromadb/large"
+#"/Users/carlo/chromadb/ada-002-hp"

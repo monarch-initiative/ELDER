@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/RAGexomiser.iml" filepath="$PROJECT_DIR$/.idea/RAGexomiser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/diff_diagnosis_embeddings.iml" filepath="$PROJECT_DIR$/.idea/diff_diagnosis_embeddings.iml" />
     </modules>
   </component>
 </project>
