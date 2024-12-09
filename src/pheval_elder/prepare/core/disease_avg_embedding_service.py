@@ -16,7 +16,6 @@ class DiseaseAvgEmbeddingService(BaseService):
     data_processor: Optional[DataProcessor]
 
     def process_data(self) -> Collection:
-        print(self.disease_to_hps)
         if not self.disease_to_hps:
             raise ValueError("disease to hps data is not initialized")
         if not self.disease_new_avg_embeddings_collection:
@@ -24,7 +23,7 @@ class DiseaseAvgEmbeddingService(BaseService):
 
         batch_size = 100
         num_diseases = len(self.disease_to_hps)
-        batch_embeddings = np.zeros((batch_size, 1536))
+        batch_embeddings = np.zeros((batch_size, 3072))
         # Use dtype=object for flexibility with string lengths and special characters, avoiding truncation issues.
         batch_diseases = np.empty(batch_size, dtype=object)
         current_index = 0

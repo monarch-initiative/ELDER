@@ -17,7 +17,6 @@ class BaseService(ABC):
     disease_weighted_avg_embeddings_collection: Dict = None
 
     def __post_init__(self):
-        print("post init in base service executed")
         self.hp_embeddings = self.data_processor.hp_embeddings
         self.disease_to_hps = self.data_processor.disease_to_hps
         # print(self.disease_to_hps)
