@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, List, Optional
 from chromadb.types import Collection
 from deprecation import deprecated
 
@@ -14,9 +14,9 @@ class QueryService:
 
     data_processor: DataProcessor
     db_manager: ChromaDBManager
-    average_llm_embedding_service: DiseaseAvgEmbeddingService
-    weighted_average_llm_embedding_service: DiseaseWeightedAvgEmbeddingService
-    similarity_strategy=None,
+    average_llm_embedding_service: Optional[DiseaseAvgEmbeddingService] = None
+    weighted_average_llm_embedding_service: Optional[DiseaseWeightedAvgEmbeddingService] = None
+    similarity_strategy=None,[]
 
     def __post_init__(self):
         self.db_manager = self.db_manager
@@ -24,8 +24,10 @@ class QueryService:
         self.similarity_strategy = self.similarity_strategy
         self.hp_embeddings = self.data_processor.hp_embeddings
         self.disease_to_hps_from_omim = self.data_processor.disease_to_hps_with_frequencies
-        self.disease_service = self.average_llm_embedding_service
-        self.disease_weighted_service = self.weighted_average_llm_embedding_service
+        if self.average_llm_embedding_service:
+            self.disease_service = self.average_llm_embedding_service
+        if self.weighted_average_llm_embedding_service:
+            self.disease_weighted_service = self.weighted_average_llm_embedding_service
 
 
     '''
