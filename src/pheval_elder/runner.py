@@ -33,7 +33,7 @@ class ElderPhEvalRunner(PhEvalRunner):
         super().__init__(*args, **kwargs)
         self.elder_runner = ElderRunner(
             similarity_measure=SimilarityMeasures.COSINE,
-            collection_name="lrd_hpo",
+            collection_name="definition_hpo",
             strategy="avg",
             embedding_model="large"
         )
@@ -45,27 +45,30 @@ class ElderPhEvalRunner(PhEvalRunner):
         self.elder_runner.setup_collections()
 
     def run(self):
+        # Curtis-1978-FLCN-253-disease_results-pheval_disease_results.tsv
+        # HP:0030436
+        # "HP:0002108
         path = Path("/Users/carlo/pheval/corpora/lirical/default/phenopackets")
         file_list = all_files(path)
         print(f"Processing {len(file_list)} files...")
         for i, file_path in tqdm(enumerate(file_list, start=1), total=385):
-            print(f"Processing file {i}: {file_path}")  # Print the file being processed
+            # print(f"Processing file {i}: {file_path}")
             self.current_file_name = file_path.stem
-            # print(f"self.current file name  = {self.current_file_name}")
             phenopacket = phenopacket_reader(file_path)
             phenopacket_util = PhenopacketUtil(phenopacket)
             observed_phenotypes = phenopacket_util.observed_phenotypic_features()
             observed_phenotypes_hpo_ids = [
                 observed_phenotype.type.id for observed_phenotype in observed_phenotypes
             ]
-            # print(observed_phenotypes_hpo_ids)
 
-            if self.elder_runner is not None:
-                self.results = self.elder_runner.run_analysis(observed_phenotypes_hpo_ids)
-                # print("Running with custom pheval runner")
-                self.post_process()  # Call post_process here for each file
+            if self.elder_runner is not None and ElderRunner.strategy == "avg":
+                self.results = self.elder_runner.avg_analysis(observed_phenotypes_hpo_ids)
+            if self.elder_runner is not None and ElderRunner.strategy == "wgt_avg":
+                self.results = self.elder_runner.wgt_avg_analysis(observed_phenotypes_hpo_ids)
             else:
                 print("Main system is not initialized")
+            self.post_process()
+
 
     def post_process(self):
         """post_process"""
@@ -78,7 +81,7 @@ class ElderPhEvalRunner(PhEvalRunner):
             dest_dir.mkdir(parents=True, exist_ok=True)
             generate_pheval_result(
                 pheval_result=disease_results,
-                sort_order_str="DESCENDING",
+                sort_order_str="ASCENDING",
                 output_dir=self.pheval_disease_results_dir,
                 tool_result_path=Path(output_file_name),
             )
@@ -88,9 +91,29 @@ class ElderPhEvalRunner(PhEvalRunner):
         else:
             print("No results to process")
 
-            # somehow pheval_disease_results is always added after but not created
-            # print(f"\n\n{results_path}\n\n")
-            # print(self.pheval_disease_results_dir)
+
+
+
+    def analysis(self, results: List[Any]):
+        if self.input_dir_config.disease_analysis and results:
+            disease_results = self.create_disease_results(self.results)
+            output_file_name = f"{self.current_file_name}_disease_results.tsv"
+            add_sub_dir = self.pheval_disease_results_dir / "pheval_disease_results/"
+            dest_dir = self.pheval_disease_results_dir / self.elder_runner.results_dir_name / self.elder_runner.results_sub_dir
+            add_sub_dir.mkdir(parents=True, exist_ok=True)
+            dest_dir.mkdir(parents=True, exist_ok=True)
+            generate_pheval_result(
+                pheval_result=disease_results,
+                sort_order_str="ASCENDING",
+                output_dir=self.pheval_disease_results_dir,
+                tool_result_path=Path(output_file_name),
+            )
+            for file in add_sub_dir.iterdir():
+                if file.is_file():
+                    shutil.copy(file, dest_dir / file.name)
+        else:
+            print("No results to process")
+
     @staticmethod
     def create_disease_results(query_results):
         return [
