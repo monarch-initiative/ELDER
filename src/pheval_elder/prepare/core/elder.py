@@ -12,6 +12,7 @@ class ElderRunner:
     collection_name: str
     embedding_model: str
     strategy: str
+    nr_of_phenopackets: str
     similarity_measure: SimilarityMeasures = SimilarityMeasures.COSINE
     results_dir_name: str = None
     results_sub_dir: str = None
@@ -29,6 +30,7 @@ class ElderRunner:
             collection_name=self.collection_name,
             model_shorthand=self.embedding_model,
             strategy=self.strategy,
+            nr_of_phenopackets=self.nr_of_phenopackets
         )
         self.data_processor = DataProcessor(db_manager=self.db_manager)
         self.disease_service = DiseaseAvgEmbeddingService(data_processor=self.data_processor)

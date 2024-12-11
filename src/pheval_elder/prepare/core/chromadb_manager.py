@@ -26,6 +26,7 @@ class ChromaDBManager:
     model_shorthand: str = field(default="ada")
     ont_hp: Collection = None
     similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE
+    nr_of_phenopackets: str = None
 
     def __post_init__(self):
         if self.path is None:
@@ -42,7 +43,8 @@ class ChromaDBManager:
         return self._get_disease_weighted_avg_embeddings_collection(
             self.collection_name,
             self.strategy,
-            self.model_shorthand
+            self.model_shorthand,
+            self.nr_of_phenopackets
         )
 
     @property
@@ -50,17 +52,19 @@ class ChromaDBManager:
         return self._get_disease_avg_embeddings_collection(
             self.collection_name,
             self.strategy,
-            self.model_shorthand
+            self.model_shorthand,
+            self.nr_of_phenopackets
         )
 
     def _get_disease_avg_embeddings_collection(
             self,
             collection_name: str,
             avg_strategy: str,
-            model_shorthand: str
+            model_shorthand: str,
+            nr_of_phenopackets: str
     ) -> Collection:
         avg_collection = self.get_or_create_collection(
-            name=f"{model_shorthand}_{avg_strategy}_{collection_name}",
+            name=f"{model_shorthand}_{avg_strategy}_{nr_of_phenopackets}_{collection_name}",
         )
         return avg_collection
 
@@ -68,10 +72,11 @@ class ChromaDBManager:
             self,
             collection_name: str,
             avg_weighted_strategy: str,
-            model_shorthand: str
+            model_shorthand: str,
+            nr_of_phenopackets: str
     ) -> Collection:
         avg_wgt_collection = self.get_or_create_collection(
-            name=f"{model_shorthand}_{avg_weighted_strategy}_{collection_name}"        )
+            name=f"{model_shorthand}_{avg_weighted_strategy}_{nr_of_phenopackets}_{collection_name}"        )
         return avg_wgt_collection
 
     def get_or_create_collection(self, name: str) -> Collection:
