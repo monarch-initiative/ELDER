@@ -1,6 +1,5 @@
 import click
-from pathlib import Path
-from src.pheval_elder.runner import ElderPhEvalRunner
+from pheval_elder.runner import ElderPhEvalRunner
 from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
 
 @click.group()
@@ -9,17 +8,14 @@ def elder():
     pass
 
 
-def run_elder(strategy: str, embedding_model: str, nr_of_phenopackets: int):
+def run_elder(strategy: str, embedding_model: str, nr_of_phenopackets: str, collection_name: str):
     """Reusable function to initialize and run the ElderPhEvalRunner."""
     runner = ElderPhEvalRunner(
         similarity_measure=SimilarityMeasures.COSINE,
-        collection_name="definition_hpo",
+        collection_name=collection_name,
         strategy=strategy,
         embedding_model=embedding_model,
         nr_of_phenopackets=nr_of_phenopackets,
-        input_dir=Path("./notebooks"),  # Adjust as necessary
-        output_dir=Path("./output"),
-        tmp_dir=Path("./tmp"),
     )
     runner.prepare()
     runner.run()
@@ -28,8 +24,9 @@ def run_elder(strategy: str, embedding_model: str, nr_of_phenopackets: int):
 
 @elder.command()
 @click.argument("embedding_model", type=click.Choice(["small", "large", "ada"], case_sensitive=False))
-@click.argument("nr_of_phenopackets", type=int)
-def average(embedding_model, nr_of_phenopackets):
+@click.argument("nr_of_phenopackets", type=str)
+@click.option("--collection_name", default="definition_hpo", help="Name of the collection to use.")
+def average(embedding_model, nr_of_phenopackets, collection_name):
     """
     Run analysis using the 'average' strategy.
 
@@ -38,16 +35,16 @@ def average(embedding_model, nr_of_phenopackets):
     NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 5000).
 
     Examples:
-        elder average small 385
-        elder average large 5000
+        elder average small 385 --collection_name custom_collection
+        elder average ada 5000 --collection_name definition_hpo
     """
-    run_elder(strategy="avg", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets)
-
+    run_elder(strategy="avg", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets, collection_name=collection_name)
 
 @elder.command()
 @click.argument("embedding_model", type=click.Choice(["small", "large", "ada"], case_sensitive=False))
-@click.argument("nr_of_phenopackets", type=int)
-def weighted_average(embedding_model, nr_of_phenopackets):
+@click.argument("nr_of_phenopackets", type=str)
+@click.option("--collection_name", default="definition_hpo", help="Name of the collection to use.")
+def weighted_average(embedding_model, nr_of_phenopackets, collection_name):
     """
     Run analysis using the 'weighted_average' strategy.
 
@@ -56,11 +53,10 @@ def weighted_average(embedding_model, nr_of_phenopackets):
     NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 5000).
 
     Examples:
-        elder weighted_average small 385
-        elder weighted_average ada 5000
+        elder weighted_average small 385 --collection_name custom_collection
+        elder weighted_average ada 5000 --collection_name definition_hpo
     """
-    run_elder(strategy="wgt_avg", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets)
-
+    run_elder(strategy="wgt_avg", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets, collection_name=collection_name)
 
 if __name__ == "__main__":
     import sys
