@@ -63,4 +63,24 @@ def weighted_average(embedding_model, nr_of_phenopackets):
 
 
 if __name__ == "__main__":
+    import sys
+
+    # Uncomment one of the lines below for testing specific commands in an IDE:
+
+    # Testing 'average' strategy
+    # sys.argv += ["average", "small", "385"]
+    # sys.argv += ["average", "large", "385"]
+    # sys.argv += ["average", "ada", "385"]
+    # sys.argv += ["average", "small", "5000"]
+    # sys.argv += ["average", "large", "5000"]
+    # sys.argv += ["average", "ada", "5000"]
+
+    # Testing 'weighted_average' strategy
+    # sys.argv += ["weighted_average", "small", "385"]
+    # sys.argv += ["weighted_average", "large", "385"]
+    # sys.argv += ["weighted_average", "ada", "385"]
+    # sys.argv += ["weighted_average", "small", "5000"]
+    # sys.argv += ["weighted_average", "large", "5000"]
+    # sys.argv += ["weighted_average", "ada", "5000"]
+
     elder()
