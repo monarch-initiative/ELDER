@@ -5,4 +5,5 @@ gene_analysis: False
 disease_analysis: True
 tool_specific_configuration_options:
   chroma_db_path: "/Users/carlo/chromadb/large"
+  385_phenopackets: "/Users/carlo/ELDER_OFFICIAL/ELDER/385_phenopackets"
 #"/Users/carlo/chromadb/ada-002-hp"
