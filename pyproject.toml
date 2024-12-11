@@ -14,14 +14,17 @@ np = "^1.0.2"
 pandas = "^2.1.4"
 pheval = "^0.3.2"
 wget = "^3.2"
-numpy = "2.1.2"
+numpy = "<2.0.0"
 api = "^0.0.7"
+click-default-group = "^1.2.4"
+venomx = "^0.1.1"
 
 [tool.poetry.plugins."pheval.plugins"]
 customrunner = "pheval_elder.runner:ElderPhEvalRunner"
 
 [tool.poetry.scripts]
-elder = "pheval_elder.cli:elder"
+elder = "pheval_elder.elder_cli:elder"
+embeddings = "pheval_elder.hf_download_cli:embeddings"
 
 [build-system]
 requires = ["poetry-core"]
