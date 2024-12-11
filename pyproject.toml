@@ -20,6 +20,8 @@ api = "^0.0.7"
 [tool.poetry.plugins."pheval.plugins"]
 customrunner = "pheval_elder.runner:ElderPhEvalRunner"
 
+[tool.poetry.scripts]
+elder = "pheval_elder.cli:elder"
 
 [build-system]
 requires = ["poetry-core"]
