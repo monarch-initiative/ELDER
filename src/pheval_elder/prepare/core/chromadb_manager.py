@@ -1,16 +1,19 @@
 import logging
 from collections.abc import Sequence
-from functools import lru_cache
-from typing import Optional, Dict
+from typing import Optional, Dict, ClassVar, Iterable
 
-from chromadb import ClientAPI as API, ClientAPI
+import numpy as np
+from chromadb import ClientAPI as API
 import chromadb
 from dataclasses import dataclass, field
-from chromadb.api.models.Collection import Collection
-from chromadb.types import Collection
-from sqlalchemy.orm.collections import collection
 
+from chromadb.errors import InvalidCollectionException
+from chromadb.types import Collection
+from oaklib.utilities.iterator_utils import chunk
+
+from pheval_elder.metadata.metadata import Metadata
 from pheval_elder.prepare.config import config_loader
+from pheval_elder.prepare.core.utils.utils import populate_venomx, normalize_metadata
 from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
 
 
@@ -18,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class ChromaDBManager:
+    name: ClassVar[str] = "chromadb"
     collection_name: str = None
     client: API = None
     path: str = None
@@ -30,9 +34,14 @@ class ChromaDBManager:
 
     def __post_init__(self):
         if self.path is None:
+            # try:
             config = config_loader.load_config()
             self.path = config["chroma_db_path"]
             self.client = chromadb.PersistentClient(path=self.path)
+            # except InvalidCollectionException as e:
+            #     self.client = chromadb.PersistentClient(
+            #         path=str(self.path), settings=Settings(allow_reset=True, anonymized_telemetry=False)
+            #     )
         else:
             self.client = chromadb.PersistentClient(path=self.path)
         if self.ont_hp is None and self.collection_name:
@@ -96,3 +105,71 @@ class ChromaDBManager:
 
     def list_collections(self) -> Sequence[Collection]:
         return self.client.list_collections()
+
+    """Huggingface insertion"""
+    def insert_from_huggingface(
+        self,
+        objs: Iterable[dict],
+        collection: str = None,
+        batch_size: int = None,
+        venomx: Optional[Metadata] = None,
+        method_name = "add",
+        **kwargs,
+    ):
+        client = self.client
+        model = None
+
+        try:
+            if venomx:
+                hf_metadata_model = venomx.venomx.embedding_model.name
+                if hf_metadata_model:
+                    model = hf_metadata_model
+        except Exception as e:
+            raise KeyError(f"Metadata from {collection} is not compatible with the current version of CurateGPT") from e
+
+        venomx = populate_venomx(collection, model, venomx.venomx)
+        cm = self.update_collection_metadata(
+            collection_name=collection,
+            venomx=venomx
+        )
+        adapter_metadata = cm.serialize_venomx_metadata_for_adapter(self.name)
+        collection_obj = client.get_or_create_collection(
+            name=collection,
+            metadata=adapter_metadata,
+        )
+        if batch_size is None:
+            batch_size = 100000
+
+        for next_objs in chunk(objs, batch_size):
+            next_objs = list(next_objs)
+            ids = [item['metadata']['id'] for item in next_objs]
+            metadatas = [normalize_metadata(o) for o in next_objs]
+            documents = [item['document'] for item in next_objs]
+            embeddings = [item['embeddings'].tolist() if isinstance(item['embeddings'], np.ndarray)
+                          else item['embeddings'] for item in next_objs]
+            method = getattr(collection_obj, method_name)
+            method(
+                documents=documents,
+                metadatas=metadatas,
+                ids=ids,
+                embeddings=embeddings
+            )
+
+    def update_collection_metadata(self, collection_name: str, **kwargs) -> Metadata:
+        """
+        set the metadata for a collection downloaded from hf.
+        """
+
+        metadata = Metadata(
+            venomx=kwargs.get("venomx"),
+            hnsw_space=kwargs.get("hnsw_space", "cosine"),
+            object_type=kwargs.get("object_type"),
+        )
+
+        chromadb_metadata = metadata.serialize_venomx_metadata_for_adapter(self.name)
+        self.client.get_or_create_collection(
+            name=collection_name,
+            metadata=chromadb_metadata
+        )
+        return metadata
+
