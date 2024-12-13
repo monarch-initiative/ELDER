@@ -4,9 +4,9 @@ from umap import UMAP
 import pandas as pd
 import plotly.express as px
 
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from pheval_elder.prepare.core.data_processor import DataProcessor
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 
 class DiseaseEmbeddingPlotter:

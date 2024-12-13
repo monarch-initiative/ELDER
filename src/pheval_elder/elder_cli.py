@@ -1,10 +1,9 @@
-import click
 from pheval_elder.runner import ElderPhEvalRunner
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 import logging
 
 import click
-from click_default_group import DefaultGroup, __version__
+from click_default_group import __version__
 
 __all__ = [
     "main",
@@ -84,8 +83,6 @@ def weighted_average(embedding_model, nr_of_phenopackets, collection_name):
     run_elder(strategy="wgt_avg", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets, collection_name=collection_name)
 
 if __name__ == "__main__":
-    import sys
-
     # Uncomment one of the lines below for testing specific commands in an IDE:
 
     # Testing 'average' strategy

@@ -1,11 +1,10 @@
-import json
 import os
 import unittest
 import numpy as np
 
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from pheval_elder.prepare.core.data_processor import DataProcessor
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 
 class TestDataProcessorIntegration(unittest.TestCase):

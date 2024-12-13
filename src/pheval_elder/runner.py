@@ -1,6 +1,4 @@
-import os
 import shutil
-import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Any
@@ -10,8 +8,8 @@ from pheval.runners.runner import PhEvalRunner
 from pheval.utils.file_utils import all_files
 from pheval.utils.phenopacket_utils import PhenopacketUtil, phenopacket_reader
 from tqdm import tqdm
-from pheval_elder.prepare.core.elder import ElderRunner
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.run.elder import ElderRunner
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 current_dir = Path(__file__).parent
 repo_root = current_dir.parents[2]

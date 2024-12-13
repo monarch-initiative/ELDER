@@ -1,9 +1,8 @@
 import unittest
-import json
 
 import numpy as np
 
-from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 
 
 class TestDataProcessor(unittest.TestCase):

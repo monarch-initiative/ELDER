@@ -1,8 +1,7 @@
-import pytest
 from pheval_elder.prepare.core.graph_embedding_extractor import GraphEmbeddingExtractor
 from pheval_elder.prepare.core.graph_data_processor import GraphDataProcessor
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 
 
 def test_parse_deep_embeddings():

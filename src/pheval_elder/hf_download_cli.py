@@ -15,7 +15,7 @@ __all__ = [
 
 from pheval_elder.metadata.metadata import Metadata
 
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
 
 collection_option = click.option("-c", "--collection", help="Collection within the database.")
 path_option = click.option("-p", "--path", help="Path to a file or directory for database.")
@@ -45,6 +45,48 @@ def main(verbose: int, quiet: bool):
 def embeddings():
     """Command group for handling embeddings."""
     pass
+
+@embeddings.command(name="upload")
+@path_option
+@collection_option
+@click.option(
+    "--repo-id",
+    required=True,
+    help="Repository ID on Hugging Face, e.g., 'biomedical-translator/[repo_name]'.",
+)
+@click.option("--private/--public", default=False, help="Whether the repository should be private.")
+@click.option("--adapter", default="huggingface", help="Adapter to use for uploading embeddings.")
+@database_type_option
+def upload_embeddings(path, collection, repo_id, private, adapter, database_type):
+    """
+    Upload embeddings and their metadata from a specified collection to a repository,
+    e.g. huggingface.
+
+    Example:
+        curategpt embeddings upload --repo-id biomedical-translator/my_repo --collection my_collection
+    """
+    db = ChromaDBManager(path)
+
+    try:
+        objects = list(db.fetch_all_objects_memory_safe(collection=collection))
+        metadata = db.collection_metadata(collection)
+    except Exception as e:
+        print(f"Error accessing collection '{collection}' from database: {e}")
+        return
+
+    if adapter == "huggingface":
+        agent = HuggingFaceAgent()
+    else:
+        raise ValueError(
+            f"Unsupported adapter: {adapter} " f"currently only huggingface adapter is supported"
+        )
+    try:
+        if database_type == "chromadb":
+            agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+        elif database_type == "duckdb":
+            agent.upload_duckdb(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+    except Exception as e:
+        print(f"Error uploading collection to {repo_id}: {e}")
 
 @embeddings.command(name="download")
 @path_option
@@ -124,20 +166,6 @@ def download_embeddings(path, collection, repo_id, embeddings_filename, metadata
                         f"Error parsing metadata file: {e}. Downloaded metadata is not in the correct format.") from e
 
         objects = [{k:v for k, v in obj.items()} for obj in store_objects]
-
-        # print(objects[0])
-
-        # print(store_objects[0])
-        # print("\n\n\n")
-        # print(store_objects[1]['metadata'].get('id', None))
-        # for idx, obj in enumerate(store_objects):
-        #     metadata = obj.get('metadata', {})
-        #     id_value = metadata.get('id', None)
-        #
-        #     if id_value is None:
-        #         print(f"Object at index {idx} has a None 'id'.")
-        #         print(f"Label: {metadata.get('label')}")
-        #         print(f"Document: {obj.get('document')}")
         db.insert_from_huggingface(collection=collection, objs=objects, venomx=metadata_obj)
     except Exception as e:
         raise e

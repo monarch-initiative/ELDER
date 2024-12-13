@@ -1,14 +1,13 @@
-import traceback
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import json
 from dataclasses import dataclass
-from typing import Dict, List, Any
+from typing import Dict
 from pathlib import Path
 import numpy as np
 from chromadb.types import Collection
 
-from pheval_elder.prepare.core.OMIMHPOExtractor import OMIMHPOExtractor
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.data_processing.OMIMHPOExtractor import OMIMHPOExtractor
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
 
 """
     This class main function is to create cached dictionaries from the ont_hp and hpoa collection given by the
