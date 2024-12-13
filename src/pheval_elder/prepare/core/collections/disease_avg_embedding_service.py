@@ -7,8 +7,9 @@ from chromadb.types import Collection
 
 from tqdm import tqdm
 
-from pheval_elder.prepare.core.base_service import BaseService
-from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.collections.base_service import BaseService
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
+from pheval_elder.prepare.core.utils.utils import populate_venomx
 
 
 @dataclass
@@ -57,5 +58,9 @@ class DiseaseAvgEmbeddingService(BaseService):
         valid_indices = [i for i, disease in enumerate(disease_ids) if disease is not None]
         filtered_ids = [disease_ids[i] for i in valid_indices]
         metadatas = [{"type": "disease"}] * len(disease_ids)
+        # col_metadata = self.disease_new_avg_embeddings_collection.metadata
         self.disease_new_avg_embeddings_collection.upsert(ids=filtered_ids, embeddings=embeddings, metadatas=metadatas)
+
+    # def metadata(self):
+    #     metadata = populate_venomx()
 

@@ -4,7 +4,7 @@ from typing import Optional, Dict
 
 from chromadb.types import Collection
 
-from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 
 
 @dataclass

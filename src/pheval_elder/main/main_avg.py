@@ -1,15 +1,10 @@
 
 import time
-import os
-from pheval_elder.main.constants import allfromomim619340
-from pheval_elder.prepare.core.base_service import BaseService
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from pheval_elder.prepare.core.data_processor import DataProcessor
-from pheval_elder.prepare.core.disease_avg_embedding_service import DiseaseAvgEmbeddingService
-from pheval_elder.prepare.core.disease_weighted_avg_embedding_service import DiseaseWeightedAvgEmbeddingService
-from pheval_elder.prepare.core.elder import ElderRunner
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
+from pheval_elder.prepare.core.collections.disease_avg_embedding_service import DiseaseAvgEmbeddingService
 from pheval_elder.prepare.core.hp_embedding_service import HPEmbeddingService
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 
 class Main:

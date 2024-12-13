@@ -1,13 +1,13 @@
 import random
 import time
 import unittest
-from typing import Optional, Union
+from typing import Union
 from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 from chromadb.api.types import OneOrMany
 
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 
 class TestChromaUpsert(unittest.TestCase):

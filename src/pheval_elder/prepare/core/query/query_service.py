@@ -3,10 +3,10 @@ from typing import Any, List, Optional
 from chromadb.types import Collection
 from deprecation import deprecated
 
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from pheval_elder.prepare.core.data_processor import DataProcessor
-from pheval_elder.prepare.core.disease_avg_embedding_service import DiseaseAvgEmbeddingService
-from pheval_elder.prepare.core.disease_weighted_avg_embedding_service import DiseaseWeightedAvgEmbeddingService
+from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
+from pheval_elder.prepare.core.collections.disease_avg_embedding_service import DiseaseAvgEmbeddingService
+from pheval_elder.prepare.core.collections.disease_weighted_avg_embedding_service import DiseaseWeightedAvgEmbeddingService
 
 
 @dataclass

@@ -1,10 +1,10 @@
 import json
 
-from typing import Optional
+from typing import Optional, List
 
 import numpy as np
 
-from venomx.model.venomx import Index, Model
+from venomx.model.venomx import Index, Model, ModelInputMethod
 from pheval_elder.metadata.metadata import Metadata
 
 
@@ -52,11 +52,19 @@ def _dict(obj):
 
 
 @staticmethod
-def populate_venomx(collection: Optional[str], model: Optional[str], existing_venomx: Index) -> Index:
+def populate_venomx(
+        collection: Optional[str],
+        model: Optional[str],
+        existing_venomx: Optional[Index],
+        fields: Optional[List[str]] = None,
+) -> Index:
     venomx = Index(
         id=f"{collection}",
         embedding_model=Model(
             name=model
+        ),
+        embedding_input_method=ModelInputMethod(
+        fields=fields if fields else None
         )
     )
     if existing_venomx:

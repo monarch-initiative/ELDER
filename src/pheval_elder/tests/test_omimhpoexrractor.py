@@ -1,9 +1,7 @@
 import json
 import unittest
-from pheval_elder.prepare.core.OMIMHPOExtractor import \
+from pheval_elder.prepare.core.data_processing.OMIMHPOExtractor import \
     OMIMHPOExtractor
-from pheval_elder.prepare.core.chromadb_manager import ChromaDBManager
-from pheval_elder.prepare.core.data_processor import DataProcessor
 
 
 class TestOMIMHPOExtractor(unittest.TestCase):

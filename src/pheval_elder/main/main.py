@@ -2,8 +2,8 @@
 import time
 import os
 from pheval_elder.main.constants import allfromomim619340
-from pheval_elder.prepare.core.elder import ElderRunner
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.run.elder import ElderRunner
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 
 class Main:

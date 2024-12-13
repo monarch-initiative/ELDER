@@ -1,20 +1,21 @@
 import logging
 from collections.abc import Sequence
-from typing import Optional, Dict, ClassVar, Iterable
+from typing import Optional, ClassVar, Iterable
 
 import numpy as np
 from chromadb import ClientAPI as API
 import chromadb
 from dataclasses import dataclass, field
 
-from chromadb.errors import InvalidCollectionException
 from chromadb.types import Collection
 from oaklib.utilities.iterator_utils import chunk
+from pydantic import ValidationError
+from venomx.model.venomx import Index
 
 from pheval_elder.metadata.metadata import Metadata
 from pheval_elder.prepare.config import config_loader
 from pheval_elder.prepare.core.utils.utils import populate_venomx, normalize_metadata
-from pheval_elder.prepare.utils.similarity_measures import SimilarityMeasures
+from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 
 logger = logging.getLogger(__name__)
@@ -173,3 +174,35 @@ class ChromaDBManager:
         )
         return metadata
 
+
+    def collection_metadata(
+        self, collection_name: Optional[str] = None, include_derived=False, **kwargs
+    ) -> Optional[Metadata]:
+        """
+        Get the metadata for a collection.
+
+        :param collection_name:
+        :return:
+
+        Parameters
+        ----------
+        """
+        try:
+            collection_obj = self.client.get_collection(name=collection_name)
+        except Exception as e:
+            logger.error(f"Failed to get collection {collection_name}: {e}")
+            return None
+        metadata_data = {**collection_obj.metadata, **kwargs}
+        try:
+            cm = Metadata.deserialize_venomx_metadata_from_adapter(metadata_data, self.name)
+        except ValidationError as ve:
+            logger.error(f"Deserializing failed. Creating clean and empty venomx object for insertion. Metadata validation error: {ve}")
+            cm = Metadata(venomx=Index())
+
+        if include_derived:
+            try:
+                logger.info(f"Getting object count for {collection_name}")
+                cm.object_count = collection_obj.count()
+            except Exception as e:
+                logger.error(f"Failed to get object count: {e}")
+        return cm

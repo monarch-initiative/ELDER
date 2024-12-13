@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import List, Dict
 from pheval.utils.phenopacket_utils import PhenopacketUtil
 
-from pheval_elder.prepare.core.OMIMHPOExtractor import OMIMHPOExtractor
+from pheval_elder.prepare.core.data_processing.OMIMHPOExtractor import OMIMHPOExtractor
 from pheval_elder.prepare.core.hpo_clustering import HPOClustering
-import matplotlib.pyplot as plt
-import seaborn as sns
+
 
 class DiseaseDataAnalyzer:
     def __init__(self, tsv_file_path: str):

@@ -5,8 +5,8 @@ import numpy as np
 from chromadb.types import Collection
 from tqdm import tqdm
 
-from pheval_elder.prepare.core.base_service import BaseService
-from pheval_elder.prepare.core.data_processor import DataProcessor
+from pheval_elder.prepare.core.collections.base_service import BaseService
+from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 
 
 @dataclass
