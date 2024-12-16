@@ -30,7 +30,7 @@ class TermSetPairWiseComparisonQuery:
         """Compute cosine similarity between two embeddings."""
         return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
-    def termset_pairwise_comparison_on_weighted_disease_embeddings(
+    def termset_pairwise_comparison_disease_embeddings(
         self,
         hps: List[str],
     ) -> tuple[dict[str, dict[str, dict[str, float]]], dict[str, dict[str, float]], dict[str, float]]:

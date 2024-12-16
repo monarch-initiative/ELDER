@@ -28,21 +28,16 @@ class ChromaDBManager:
     path: str = None
     ontology: str = field(default="hp")
     strategy: str = field(default="avg") # wgt_avg
-    model_shorthand: str = field(default="ada")
+    model_shorthand: str = field(default="ada") # should no default
     ont_hp: Collection = None
     similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE
     nr_of_phenopackets: str = None
 
     def __post_init__(self):
         if self.path is None:
-            # try:
             config = config_loader.load_config()
             self.path = config["chroma_db_path"]
             self.client = chromadb.PersistentClient(path=self.path)
-            # except InvalidCollectionException as e:
-            #     self.client = chromadb.PersistentClient(
-            #         path=str(self.path), settings=Settings(allow_reset=True, anonymized_telemetry=False)
-            #     )
         else:
             self.client = chromadb.PersistentClient(path=self.path)
         if self.ont_hp is None and self.collection_name:

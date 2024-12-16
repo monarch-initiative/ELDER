@@ -2,6 +2,13 @@ from typing import List, Tuple
 import re
 from tqdm import tqdm
 
+"""
+so when doing this try to make each HP as distinct as possible to stretch embedding space for each disease
+do not use same words to describe different concepts or same concepts
+
+(referring to latin would be better language for embeddings)
+"""
+
 import chromadb
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.llms import OpenAI

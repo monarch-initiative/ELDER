@@ -21,7 +21,7 @@ class ElderRunner:
         """
         Data Resources
         """
-        self.strategy = self.strategy.lower()
+        # self.strategy = self.strategy.lower()
         self.embedding_model = self.embedding_model.lower()
         self.results_dir_name = self.embedding_model + "_" + self.strategy + "_" + "pheval_disease_results"
         self.results_sub_dir = self.embedding_model + "_" + self.strategy + "_" + self.collection_name
@@ -32,6 +32,7 @@ class ElderRunner:
             strategy=self.strategy,
             nr_of_phenopackets=self.nr_of_phenopackets
         )
+
         self.data_processor = DataProcessor(db_manager=self.db_manager)
         self.disease_service = DiseaseAvgEmbeddingService(data_processor=self.data_processor)
         self.disease_weighted_service = DiseaseWeightedAvgEmbeddingService(data_processor=self.data_processor)
