@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from pheval_elder.runner import ElderPhEvalRunner
 from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 import logging
@@ -35,6 +37,12 @@ def elder():
 def run_elder(strategy: str, embedding_model: str, nr_of_phenopackets: str, collection_name: str):
     """Reusable function to initialize and run the ElderPhEvalRunner."""
     runner = ElderPhEvalRunner(
+        input_dir=Path("."),
+        testdata_dir=Path("."),
+        tmp_dir=Path("."),
+        output_dir=Path("."),
+        config_file=Path("."),
+        version="0.3.2",
         similarity_measure=SimilarityMeasures.COSINE,
         collection_name=collection_name,
         strategy=strategy,
@@ -56,11 +64,11 @@ def average(embedding_model, nr_of_phenopackets, collection_name):
 
     EMBEDDING_MODEL: Choose 'small', 'large', or 'ada'.
 
-    NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 5000).
+    NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 7702).
 
     Examples:
         elder average small 385 --collection_name custom_collection
-        elder average ada 5000 --collection_name definition_hpo
+        elder average ada 7702 --collection_name definition_hpo
     """
     run_elder(strategy="avg", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets, collection_name=collection_name)
 
@@ -74,31 +82,51 @@ def weighted_average(embedding_model, nr_of_phenopackets, collection_name):
 
     EMBEDDING_MODEL: Choose 'small', 'large', or 'ada'.
 
-    NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 5000).
+    NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 7702).
 
     Examples:
         elder weighted_average small 385 --collection_name custom_collection
-        elder weighted_average ada 5000 --collection_name definition_hpo
+        elder weighted_average ada 7702 --collection_name definition_hpo
     """
     run_elder(strategy="wgt_avg", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets, collection_name=collection_name)
+
+@elder.command()
+@click.argument("embedding_model", type=click.Choice(["small", "large", "ada"], case_sensitive=False))
+@click.argument("nr_of_phenopackets", type=str)
+@click.option("--collection_name", default="definition_hpo", help="Name of the collection to use.")
+def termset_pairwise_comparison(embedding_model, nr_of_phenopackets, collection_name):
+    """
+    Run analysis using the 'termset_pairwise_comparison' strategy.
+
+    EMBEDDING_MODEL: Choose 'small', 'large', or 'ada'.
+
+    NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 7702).
+
+    Examples:
+        elder average small 385 --collection_name custom_collection
+        elder average ada 7702 --collection_name definition_hpo
+    """
+    run_elder(strategy="tpc", embedding_model=embedding_model, nr_of_phenopackets=nr_of_phenopackets, collection_name=collection_name)
+
+
 
 if __name__ == "__main__":
     # Uncomment one of the lines below for testing specific commands in an IDE:
 
     # Testing 'average' strategy
-    # sys.argv += ["average", "small", "385"]
-    # sys.argv += ["average", "large", "385"]
-    # sys.argv += ["average", "ada", "385"]
-    # sys.argv += ["average", "small", "5000"]
-    # sys.argv += ["average", "large", "5000"]
-    # sys.argv += ["average", "ada", "5000"]
+    # sys.argv += ["avg", "small", "385"]
+    # sys.argv += ["avg", "large", "385"]
+    # sys.argv += ["avg", "ada", "385"]
+    # sys.argv += ["avg", "small", "7702"]
+    # sys.argv += ["avg", "large", "7702"]
+    # sys.argv += ["avg", "ada", "7702"]
 
     # Testing 'weighted_average' strategy
-    # sys.argv += ["weighted_average", "small", "385"]
-    # sys.argv += ["weighted_average", "large", "385"]
-    # sys.argv += ["weighted_average", "ada", "385"]
-    # sys.argv += ["weighted_average", "small", "5000"]
-    # sys.argv += ["weighted_average", "large", "5000"]
-    # sys.argv += ["weighted_average", "ada", "5000"]
+    # sys.argv += ["wgt_avg", "small", "385"]
+    # sys.argv += ["wgt_avg", "large", "385"]
+    # sys.argv += ["wgt_avg", "ada", "385"]
+    # sys.argv += ["wgt_avg", "small", "7702"]
+    # sys.argv += ["wgt_avg", "large", "7702"]
+    # sys.argv += ["wgt_avg", "ada", "7702"]
 
     elder()
