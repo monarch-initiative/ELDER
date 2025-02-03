@@ -1,6 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import json
 from dataclasses import dataclass
+from functools import cached_property, cache
 from typing import Dict
 from pathlib import Path
 import numpy as np
@@ -25,13 +26,13 @@ class DataProcessor:
         self._disease_to_hps = None
         self._disease_to_hps_with_frequencies = None
 
-    @property
+    @cached_property
     def hp_embeddings(self) -> Dict:
         if self._hp_embeddings is None:
             self._hp_embeddings = self.create_hpo_id_to_embedding(self.db_manager.ont_hp)
         return self._hp_embeddings
 
-    @property
+    @cached_property
     def disease_to_hps_with_frequencies(self) -> Dict:
         if self._disease_to_hps_with_frequencies is None:
             file = Path(__file__).resolve().parents[5]
@@ -40,16 +41,12 @@ class DataProcessor:
             self._disease_to_hps_with_frequencies = OMIMHPOExtractor.extract_omim_hpo_mappings_with_frequencies_1(data)
         return self._disease_to_hps_with_frequencies
 
-    @property
+    @cached_property
     def disease_to_hps(self) -> Dict:
         if self._disease_to_hps is None:
             file = Path(__file__).resolve().parents[5]
-            print("\n\n")
-            print(file)
-            print("\n\n")
             file_path = file / "phenotype.hpoa"
-            print(file_path)
-            # hpoa_path = "/Users/carlo/ELDER_OFFICIAL/ELDER/phenotype.hpoa"
+            # hpoa_path = "/Users/{name}/ELDER_OFFICIAL/ELDER/phenotype.hpoa"
             data = OMIMHPOExtractor.read_data_from_file(file_path)
             self._disease_to_hps = OMIMHPOExtractor.extract_omim_hpo_mappings_default(data)
         return self._disease_to_hps

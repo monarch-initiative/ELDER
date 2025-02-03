@@ -32,8 +32,12 @@ class ChromaDBManager:
     ont_hp: Collection = None
     similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE
     nr_of_phenopackets: str = None
+    nr_of_results: int = None
 
     def __post_init__(self):
+        if self.collection_name is None:
+            raise RuntimeError(f"Collection name of embedded HP data (curateGPT output) must be provided.")
+            # lrd_hpo, label_hpo, defintion_hpo, relationships_hpo
         if self.path is None:
             config = config_loader.load_config()
             self.path = config["chroma_db_path"]
@@ -49,7 +53,8 @@ class ChromaDBManager:
             self.collection_name,
             self.strategy,
             self.model_shorthand,
-            self.nr_of_phenopackets
+            self.nr_of_phenopackets,
+            self.nr_of_results
         )
 
     @property
@@ -58,7 +63,8 @@ class ChromaDBManager:
             self.collection_name,
             self.strategy,
             self.model_shorthand,
-            self.nr_of_phenopackets
+            self.nr_of_phenopackets,
+            self.nr_of_results
         )
 
     def _get_disease_avg_embeddings_collection(
@@ -66,10 +72,12 @@ class ChromaDBManager:
             collection_name: str,
             avg_strategy: str,
             model_shorthand: str,
-            nr_of_phenopackets: str
+            nr_of_phenopackets: str,
+            nr_of_results: int
+
     ) -> Collection:
         avg_collection = self.get_or_create_collection(
-            name=f"{model_shorthand}_{avg_strategy}_{nr_of_phenopackets}_{collection_name}",
+            name=f"{model_shorthand}_{avg_strategy}_{nr_of_phenopackets}_{collection_name}_top_{nr_of_results}_results",
         )
         return avg_collection
 
@@ -78,10 +86,11 @@ class ChromaDBManager:
             collection_name: str,
             avg_weighted_strategy: str,
             model_shorthand: str,
-            nr_of_phenopackets: str
+            nr_of_phenopackets: str,
+            nr_of_results: int
     ) -> Collection:
         avg_wgt_collection = self.get_or_create_collection(
-            name=f"{model_shorthand}_{avg_weighted_strategy}_{nr_of_phenopackets}_{collection_name}"        )
+            name=f"{model_shorthand}_{avg_weighted_strategy}_{nr_of_phenopackets}_{collection_name}_top_{nr_of_results}_results")
         return avg_wgt_collection
 
     def get_or_create_collection(self, name: str) -> Collection:
