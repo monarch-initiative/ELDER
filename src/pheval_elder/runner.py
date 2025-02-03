@@ -8,13 +8,16 @@ from pheval.runners.runner import PhEvalRunner
 from pheval.utils.file_utils import all_files
 from pheval.utils.phenopacket_utils import PhenopacketUtil, phenopacket_reader
 from tqdm import tqdm
+
+from pheval_elder.prepare.core.query.termsetpairwise import TermSetPairWiseComparisonQuery
 from pheval_elder.prepare.core.run.elder import ElderRunner
 from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 
 current_dir = Path(__file__).parent
 repo_root = current_dir.parents[1]
 LIRICAL_PHENOPACKETS = "385_lirical_phenopackets"
-ALL_PHENOPACKETS = "7702_all_phenopackets"
+ALL_PHENOPACKETS = "5213_phenopackets"
+# ALL_PHENOPACKETS = "7702_all_phenopackets"
 
 @dataclass
 class ElderPhEvalRunner(PhEvalRunner):
@@ -31,8 +34,10 @@ class ElderPhEvalRunner(PhEvalRunner):
     strategy: str
     embedding_model: str
     nr_of_phenopackets_str: str
+    db_collection_path: str
     results: List[Any] = field(default_factory=list)
     results_path: str = None
+    tpc_comparison: bool = False
 
 
     def __init__(
@@ -48,6 +53,9 @@ class ElderPhEvalRunner(PhEvalRunner):
             strategy: str,
             embedding_model: str,
             nr_of_phenopackets: str,
+            nr_of_results: int,
+            db_collection_path: str,
+            # tpc_comparison: bool = False,
             **kwargs,
     ):
         # Pass only arguments that belong to PhEvalRunner as this is the ParentClass
@@ -66,12 +74,19 @@ class ElderPhEvalRunner(PhEvalRunner):
         self.strategy = strategy
         self.embedding_model = embedding_model
         self.nr_of_phenopackets_str = nr_of_phenopackets
+        self.nr_of_results = nr_of_results
+        self.db_collection_path = db_collection_path
+        # self.tpc_comparison = tpc_comparison
+        # for tpc comparison
+        # if self.db_collection_path is not None and self.tpc_comparison == True:
         self.elder_runner = ElderRunner(
             similarity_measure=SimilarityMeasures.COSINE,
             collection_name=self.collection_name,
             strategy=self.strategy,
             embedding_model=self.embedding_model,
-            nr_of_phenopackets=self.nr_of_phenopackets_str
+            nr_of_phenopackets=self.nr_of_phenopackets_str,
+            db_collection_path = self.db_collection_path,
+            nr_of_results = self.nr_of_results
         )
         self.current_file_name = None
 
@@ -81,6 +96,8 @@ class ElderPhEvalRunner(PhEvalRunner):
         self.elder_runner.setup_collections()
 
     def run(self):
+        # better to have seperate runners, but for now
+        # if not self.tpc_comparison:
         total_phenopackets = int(self.elder_runner.nr_of_phenopackets)
         path = self.phenopackets(total_phenopackets)
         file_list = all_files(path)
@@ -94,12 +111,29 @@ class ElderPhEvalRunner(PhEvalRunner):
             ]
 
             if self.elder_runner is not None and self.elder_runner.strategy == "avg":
-                self.results = self.elder_runner.avg_analysis(observed_phenotypes_hpo_ids)
+                self.results = self.elder_runner.avg_analysis(observed_phenotypes_hpo_ids, self.nr_of_results)
             elif self.elder_runner is not None and self.elder_runner.strategy == "wgt_avg":
-                self.results = self.elder_runner.wgt_avg_analysis(observed_phenotypes_hpo_ids)
+                self.results = self.elder_runner.wgt_avg_analysis(observed_phenotypes_hpo_ids, self.nr_of_results)
+            elif self.elder_runner is not None and self.elder_runner.strategy == "tpc": # best match average
+                self.results = self.elder_runner.tcp_analysis(observed_phenotypes_hpo_ids, self.nr_of_results)
             else:
-                print("Main system is not initialized")
+                raise RuntimeError()
             self.post_process()
+        # tpc ccomparison
+        # else:
+        #     path = self.phenopackets(int(self.nr_of_phenopackets_str))
+        #     file_list = all_files(path)
+        #     for i, file_path in tqdm(enumerate(file_list, start=1), total=int(self.nr_of_phenopackets_str)):
+        #         self.current_file_name = file_path.stem
+        #         phenopacket = phenopacket_reader(file_path)
+        #         phenopacket_util = PhenopacketUtil(phenopacket)
+        #         observed_phenotypes = phenopacket_util.observed_phenotypic_features()
+        #         observed_phenotypes_hpo_ids = [
+        #             observed_phenotype.type.id for observed_phenotype in observed_phenotypes
+        #         ]
+        #         self.results = self.elder_runner.tcp_analysis(observed_phenotypes_hpo_ids, self.nr_of_results)
+
+
 
 
     def post_process(self):
@@ -137,7 +171,7 @@ class ElderPhEvalRunner(PhEvalRunner):
 
         if nr_of_phenopackets < 400:
             phenopackets_dir = repo_root / LIRICAL_PHENOPACKETS
-        elif nr_of_phenopackets >= 7000:
+        elif nr_of_phenopackets >= 5000:
             phenopackets_dir = repo_root / ALL_PHENOPACKETS
 
         if phenopackets_dir.exists() and any(phenopackets_dir.iterdir()):
