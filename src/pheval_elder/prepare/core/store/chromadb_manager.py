@@ -33,19 +33,24 @@ class ChromaDBManager:
     similarity: Optional[SimilarityMeasures] = SimilarityMeasures.COSINE
     nr_of_phenopackets: str = None
     nr_of_results: int = None
+    auto_create: bool = False
 
     def __post_init__(self):
-        if self.collection_name is None:
-            raise RuntimeError(f"Collection name of embedded HP data (curateGPT output) must be provided.")
-            # lrd_hpo, label_hpo, defintion_hpo, relationships_hpo
-        if self.path is None:
-            config = config_loader.load_config()
-            self.path = config["chroma_db_path"]
-            self.client = chromadb.PersistentClient(path=self.path)
+        if not self.auto_create:
+            if self.collection_name is None:
+                raise RuntimeError(f"Collection name of embedded HP data (curateGPT output) must be provided.")  # lrd_hpo, label_hpo, defintion_hpo, relationships_hpo
+            if self.path is None:
+                config = config_loader.load_config()
+                self.path = config["chroma_db_path"]
+                self.client = chromadb.PersistentClient(path=self.path)
+            else:
+                self.client = chromadb.PersistentClient(path=self.path)
+            if self.ont_hp is None and self.collection_name and self.auto_create == False:
+                self.ont_hp = self.client.get_collection(self.collection_name)
         else:
-            self.client = chromadb.PersistentClient(path=self.path)
-        if self.ont_hp is None and self.collection_name:
-            self.ont_hp = self.client.get_collection(self.collection_name)
+            self.handle_auto_create()
+        # if self.auto_create:
+        #     self.ont_hp = self.client.get_or_create_collection(self.collection_name)
 
     @property
     def disease_weighted_avg_embeddings_collection(self) -> Collection:
@@ -98,6 +103,7 @@ class ChromaDBManager:
             similarity_str_value = self.similarity.value if self.similarity else SimilarityMeasures.COSINE.value
             collection = self.client.get_or_create_collection(
                 name=name,
+                # TODO: this is for HPO, adjust for others (maybe a bool flag in params, to adjust)
                 metadata={
                     "hnsw:space": similarity_str_value,
                     "hnsw:search_ef": 800,
@@ -138,12 +144,12 @@ class ChromaDBManager:
             venomx=venomx
         )
         adapter_metadata = cm.serialize_venomx_metadata_for_adapter(self.name)
-        collection_obj = client.get_or_create_collection(
+        self.ont_hp = client.get_or_create_collection(
             name=collection,
             metadata=adapter_metadata,
         )
         if batch_size is None:
-            batch_size = 100000
+            batch_size = 1000
 
         for next_objs in chunk(objs, batch_size):
             next_objs = list(next_objs)
@@ -152,7 +158,7 @@ class ChromaDBManager:
             documents = [item['document'] for item in next_objs]
             embeddings = [item['embeddings'].tolist() if isinstance(item['embeddings'], np.ndarray)
                           else item['embeddings'] for item in next_objs]
-            method = getattr(collection_obj, method_name)
+            method = getattr(self.ont_hp, method_name)
             method(
                 documents=documents,
                 metadatas=metadatas,
@@ -164,6 +170,9 @@ class ChromaDBManager:
         """
         set the metadata for a collection downloaded from hf.
         """
+        # self.ont_hp = self.client.get_or_create_collection(
+        #     name=self.collection_name,
+        # )
 
         metadata = Metadata(
             venomx=kwargs.get("venomx"),
@@ -210,3 +219,13 @@ class ChromaDBManager:
             except Exception as e:
                 logger.error(f"Failed to get object count: {e}")
         return cm
+
+
+    def handle_auto_create(self):
+        if self.path is None:
+            config = config_loader.load_config()
+            self.path = config["chroma_db_path"]
+            self.client = chromadb.PersistentClient(path=self.path)
+        else:
+            self.client = chromadb.PersistentClient(path=self.path)
+        self.ont_hp = self.client.get_or_create_collection(self.collection_name)

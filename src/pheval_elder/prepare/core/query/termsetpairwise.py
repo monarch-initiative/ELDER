@@ -128,7 +128,7 @@ class TermSetPairWiseComparisonQuery:
             sorted_avg_pairwise_score=sorted(avg_pairwise_score.items(), key=lambda x: x[1], reverse=True)[:nr_of_results],
         )
 
-        return tpc_result
+        return tpc_result.sorted_avg_pairwise_score
 
 
         # weighting the best match similarities ?

@@ -19,6 +19,7 @@ api = "^0.0.7"
 click-default-group = "^1.2.4"
 venomx = "^0.1.1"
 langchain = "^0.3.11"
+notebook = "^7.3.2"
 
 [tool.poetry.plugins."pheval.plugins"]
 customrunner = "pheval_elder.runner:ElderPhEvalRunner"

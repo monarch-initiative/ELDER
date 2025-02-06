@@ -56,8 +56,7 @@ def embeddings():
 )
 @click.option("--private/--public", default=False, help="Whether the repository should be private.")
 @click.option("--adapter", default="huggingface", help="Adapter to use for uploading embeddings.")
-@database_type_option
-def upload_embeddings(path, collection, repo_id, private, adapter, database_type):
+def upload_embeddings(path, collection, repo_id, private, adapter):
     """
     Upload embeddings and their metadata from a specified collection to a repository,
     e.g. huggingface.
@@ -81,10 +80,10 @@ def upload_embeddings(path, collection, repo_id, private, adapter, database_type
             f"Unsupported adapter: {adapter} " f"currently only huggingface adapter is supported"
         )
     try:
-        if database_type == "chromadb":
-            agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
-        elif database_type == "duckdb":
-            agent.upload_duckdb(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+        # if database_type == "chromadb":
+        agent.upload(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
+        # elif database_type == "duckdb":
+        #     agent.upload_duckdb(objects=objects, metadata=metadata, repo_id=repo_id, private=private)
     except Exception as e:
         print(f"Error uploading collection to {repo_id}: {e}")
 
@@ -117,11 +116,12 @@ def download_embeddings(path, collection, repo_id, embeddings_filename, metadata
     embeddings download -p ./db --repo-id iQuxLE/example7 --collection hf_collection --embeddings-filename embeddings.parquet --metadata-filename metadata.yaml
     """
 
-    db = ChromaDBManager(path=path)
+    db = ChromaDBManager(path=path, collection_name=collection, auto_create=True)
     parquet_download = None
     metadata_download = None
     store_objects = None
     agent = HuggingFaceAgent()
+
     try:
         if embeddings_filename:
             embedding_filename = repo_id + "/" + embeddings_filename
@@ -144,7 +144,7 @@ def download_embeddings(path, collection, repo_id, embeddings_filename, metadata
             df = pd.read_parquet(Path(parquet_download))
             store_objects = [
                 {
-                    "metadata": row.iloc[0]['metadata'],
+                    "metadata": row.iloc[0],
                     "embeddings": row.iloc[1],
                     "document": row.iloc[2]
                 } for _, row in df.iterrows()
