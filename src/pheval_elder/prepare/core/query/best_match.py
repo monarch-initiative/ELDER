@@ -1,10 +1,10 @@
+import time
 from collections import defaultdict
-from typing import Iterator
-
+from typing import List, Dict, Union, Any, Iterator
+import concurrent.futures
+import numpy as np
 from pheval.post_processing.post_processing import PhEvalDiseaseResult
 from pydantic import BaseModel
-from typing import List, Dict
-import numpy as np
 
 
 BEST_MATCH_SCORES = Dict[str, Dict[str, Dict[str, float]]]
@@ -54,17 +54,22 @@ class TermSetPairWiseComparisonQuery:
 
 
     def termset_pairwise_comparison_disease_embeddings(self, hps: List[str], nr_of_results: int) -> Iterator[PhEvalDiseaseResult]:
-        best_match_scores: BEST_MATCH_SCORES = defaultdict(lambda: {"best_scores": {}})
+        best_match_scores: BEST_MATCH_SCORES = {}
 
-        for input_hp in hps:
+        def compute_disease_similarity(input_hp: str):
+
+
             if input_hp not in self.hp_embeddings:
                 print(f"Embedding for phenotype {input_hp} not found in hp_embeddings list: {hps}.")
-                with open("missed_hps.txt", "a") as f:
-                    f.write(f"{input_hp}\n")
-                continue
+                return None # skipp missing embeddings
+
+            local_best_match_score = {}
 
             for disease_id, disease_data in self.disease_to_hps_from_omim.items():
                 disease_name = disease_data["disease_name"]
+                # disease_get_name = disease_data.get("disease_name")
+                # print(disease_get_name)
+
                 disease_phenotypes = disease_data["phenotypes"]
 
                 # cosine similarities between input_hp and each disease-phenotype
@@ -77,16 +82,16 @@ class TermSetPairWiseComparisonQuery:
                 # store
                 if cosine_similarities:
                     best_match = max(cosine_similarities)
-                    best_match_scores[disease_id]["disease_name"] = disease_name
-                    best_match_scores[disease_id]["best_scores"][input_hp] = best_match
+                    local_best_match_score.setdefault(disease_id, {"disease_name": disease_name, "best_scores": {}})
+                    local_best_match_score[disease_id]['best_scores'][input_hp] = best_match
 
                     """
                     Example: best_match_scores structure
 
                     {
-                        "OMIM:101600": {
-                            "disease_name": "Marfan Syndrome",
-                            "best_scores": {
+                        "OMIM:101600": {  
+                            "disease_name": "Marfan Syndrome",  
+                            "best_scores": {  
                                 "HP:0001250": 0.98,  # Best similarity score per input phenotype
                                 "HP:0004322": 0.60
                             }
@@ -114,3 +119,18 @@ class TermSetPairWiseComparisonQuery:
                 disease_name=scores.get("disease_name", "Unknown Disease"),
                 score=avg_best_match_score
             )
+
+        # # calc avg  -> out
+        # disease_scores = []
+        # for disease_id, scores in best_match_scores.items():
+        #     avg_best_match_score = float(np.mean(list(scores["best_scores"].values())))
+        #     disease_scores.append(DiseaseScores(
+        #         disease_id=disease_id,
+        #         disease_name=scores.get("disease_name", "Unknown Disease"),
+        #         avg_best_match_score=avg_best_match_score
+        #     ))
+        #
+        # sorted_disease_scores = sorted(disease_scores, key=lambda x: x.avg_best_match_score, reverse=True)
+
+        # return sorted_disease_scores[:nr_of_results]
+

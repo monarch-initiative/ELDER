@@ -1,3 +1,4 @@
+import logging
 import time
 from typing import Optional
 
@@ -11,6 +12,8 @@ from pheval_elder.prepare.core.collections.base_service import BaseService
 from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 from pheval_elder.prepare.core.utils.utils import populate_venomx
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @dataclass
 class DiseaseAvgEmbeddingService(BaseService):
@@ -21,10 +24,13 @@ class DiseaseAvgEmbeddingService(BaseService):
             raise ValueError("disease to hps data is not initialized")
         if not self.disease_new_avg_embeddings_collection:
             raise ValueError("disease_new_avg_embeddings collection is not initialized")
+        if self.disease_new_avg_embeddings_collection:
+            logger.info(f"Return Exisiting DiseaseAvgEmbeddingsCollection {self.disease_new_avg_embeddings_collection}")
+            return self.disease_new_avg_embeddings_collection
 
-        batch_size = 100
+        batch_size = 500
         num_diseases = len(self.disease_to_hps)
-        batch_embeddings = np.zeros((batch_size, 3072))
+        batch_embeddings = np.zeros((batch_size, 1536)) #3072 for large model
         # Use dtype=object for flexibility with string lengths and special characters, avoiding truncation issues.
         batch_diseases = np.empty(batch_size, dtype=object)
         current_index = 0
@@ -32,6 +38,11 @@ class DiseaseAvgEmbeddingService(BaseService):
         upsert_time = 0
 
         for disease, hps in tqdm(self.disease_to_hps.items(), total=num_diseases):
+            # Check if hps is empty; if so, log and skip.
+            if not hps:
+                logger.warning(f"No HP data for disease: {disease}. Skipping.")
+                continue
+
             start = time.time()
             average_embedding = self.data_processor.calculate_average_embedding(hps, self.hp_embeddings)
             embedding_calc_time += time.time() - start

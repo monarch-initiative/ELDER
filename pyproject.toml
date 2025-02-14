@@ -20,6 +20,10 @@ click-default-group = "^1.2.4"
 venomx = "^0.1.1"
 langchain = "^0.3.11"
 notebook = "^7.3.2"
+jaxlib = "^0.5.0"
+jax = "^0.5.0"
+nvidia-ml-py3 = "^7.352.0"
+torch = "^2.6.0"
 
 [tool.poetry.plugins."pheval.plugins"]
 customrunner = "pheval_elder.runner:ElderPhEvalRunner"

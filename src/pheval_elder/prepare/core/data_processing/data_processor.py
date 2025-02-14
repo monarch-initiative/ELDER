@@ -1,8 +1,11 @@
+import logging
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import json
+from csv import excel
 from dataclasses import dataclass
 from functools import cached_property, cache
-from typing import Dict
+from typing import Dict, Iterator
 from pathlib import Path
 import numpy as np
 from chromadb.types import Collection
@@ -15,6 +18,9 @@ from pheval_elder.prepare.core.store.chromadb_manager import ChromaDBManager
     ChromaDBManager. 
     Dictionaries are used for the setup of the collections
 """
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @dataclass
 class DataProcessor:
@@ -30,7 +36,10 @@ class DataProcessor:
     def hp_embeddings(self) -> Dict:
         if self._hp_embeddings is None:
             self._hp_embeddings = self.create_hpo_id_to_embedding(self.db_manager.ont_hp)
-        return self._hp_embeddings
+        if len(self._hp_embeddings) > 0:
+            return self._hp_embeddings
+        else:
+            logger.warning(f"No HPO embeddings found for {self.db_manager.ont_hp}")
 
     @cached_property
     def disease_to_hps_with_frequencies(self) -> Dict:
@@ -59,14 +68,36 @@ class DataProcessor:
         :param collection: The collection to process
         :return: A dictionary mapping HPO IDs to a dictionary of their label and embeddings.
         """
-        hpo_id_to_data = {}
+        hpo_id_to_data = defaultdict(dict)
         results = collection.get(include=["metadatas", "embeddings"])
         for metadata, embedding in zip(results.get("metadatas", []), results.get("embeddings", []), strict=False):
-            metadata_json = json.loads(metadata["_json"])
-            hpo_id = metadata_json.get("original_id")
+            hpo_id = None
+            if isinstance(metadata, dict) and "_json" in metadata:
+                try:
+                    metadata_json = json.loads(metadata["_json"])
+                    hpo_id = metadata_json.get("original_id")
+                    label = metadata_json.get("label")
+                    if hpo_id is None and isinstance(metadata_json.get("metadata"), dict):
+                        hpo_id = metadata_json["metadata"].get("original_id")
+                        label = metadata_json["metadata"].get("label")
+                except (json.decoder.JSONDecodeError, KeyError) as e:
+                    logger.warning(f"Failed to parse _json metadata: {e}")
+
             if hpo_id:
-                hpo_id_to_data[hpo_id] = {"embeddings": embedding}  # #{'HP:0005872': [1,2,3, ...]}
-        return {k: {'embeddings': np.array(v['embeddings'])} for k, v in hpo_id_to_data.items()}
+                if label is None:
+                    print(f"⚠️ Warning: Label missing for {hpo_id}, setting default")
+                    label = "Unknown"
+
+                hpo_id_to_data[hpo_id] = {
+                    "label": label,
+                    "embeddings": np.array(embedding)  # ✅ Ensures embeddings are always included
+                }
+
+            else:
+                print(f"⚠️ Warning: Missing 'original_id' in metadata: {metadata}")
+
+        return hpo_id_to_data
+
 
 
     @staticmethod

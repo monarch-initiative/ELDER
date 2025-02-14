@@ -16,6 +16,7 @@ from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasur
 current_dir = Path(__file__).parent
 repo_root = current_dir.parents[1]
 LIRICAL_PHENOPACKETS = "385_lirical_phenopackets"
+Z_PHENOPACKET_TEST = "10_z_phenopackets"
 ALL_PHENOPACKETS = "5213_phenopackets"
 # ALL_PHENOPACKETS = "7702_all_phenopackets"
 
@@ -99,7 +100,9 @@ class ElderPhEvalRunner(PhEvalRunner):
         # better to have seperate runners, but for now
         # if not self.tpc_comparison:
         total_phenopackets = int(self.elder_runner.nr_of_phenopackets)
+        print(f"Running {total_phenopackets} phenopackets")
         path = self.phenopackets(total_phenopackets)
+        print(path)
         file_list = all_files(path)
         for i, file_path in tqdm(enumerate(file_list, start=1), total=total_phenopackets):
             self.current_file_name = file_path.stem
@@ -147,7 +150,7 @@ class ElderPhEvalRunner(PhEvalRunner):
             dest_dir.mkdir(parents=True, exist_ok=True)
             generate_pheval_result(
                 pheval_result=disease_results,
-                sort_order_str="ASCENDING",
+                sort_order_str="ASCENDING", # Descending for TPC else ASCENDING
                 output_dir=self.pheval_disease_results_dir,
                 tool_result_path=Path(output_file_name),
             )

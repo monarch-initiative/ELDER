@@ -143,8 +143,6 @@ class HuggingFaceAgent:
             filename=filename,
             token=self.token,
         )
-        print(f"Downloaded {filename} from {repo_id} in {repo_type}")
-        print("Download path:", download_path)
 
         return download_path
 

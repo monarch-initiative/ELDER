@@ -1,5 +1,6 @@
 import json
 import os
+from collections import defaultdict
 from io import StringIO
 from io import BufferedWriter
 from enum import Enum
@@ -56,7 +57,7 @@ class OMIMHPOExtractor:
         :param data: String containing the data with OMIM and HPO information.
         :return: Dictionary with OMIM IDs as keys and lists of HPO IDs as values.
         """
-        omim_hpo_dict = {}
+        omim_hpo_dict = defaultdict(lambda: {"disease_name": None, "phenotypes": []})
         lines = data.split('\n')
         header_skipped = False
 
@@ -76,15 +77,26 @@ class OMIMHPOExtractor:
 
             omim_id, disease_name, hpo_id = parts[0].strip(), parts[1].strip(), parts[3].strip()
 
-            if omim_id in omim_hpo_dict:
-                omim_hpo_dict[omim_id].append(hpo_id)
-            else:
-                omim_hpo_dict[omim_id] = [hpo_id]
+            omim_hpo_dict[omim_id]['phenotypes'].append(hpo_id)
+            omim_hpo_dict[omim_id]['disease_name'] = disease_name
 
-        for omim in omim_hpo_dict:
-            omim_hpo_dict[omim] = sorted(omim_hpo_dict[omim])
+        final_omim_hpo_dict = {k: {"disease_name": v["disease_name"], "phenotypes": sorted(v["phenotypes"])} for k,v in omim_hpo_dict.items()}
 
-        return omim_hpo_dict
+        """
+        {
+            "OMIM:101600": {
+                "disease_name": "Marfan Syndrome",
+                "phenotypes": ["HP:0001250", "HP:0001263", "HP:0001274"]
+        },
+            "OMIM:203800": {
+                "disease_name": "Cystic Fibrosis",
+                "phenotypes": ["HP:0001733", "HP:0002023", "HP:0002715"]
+            }
+        }
+
+        """
+
+        return final_omim_hpo_dict
 
     @staticmethod
     def extract_omim_hpo_mappings_with_frequencies_1(data) -> Dict:

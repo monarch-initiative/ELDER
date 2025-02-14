@@ -40,17 +40,17 @@ class ChromaDBManager:
             if self.collection_name is None:
                 raise RuntimeError(f"Collection name of embedded HP data (curateGPT output) must be provided.")  # lrd_hpo, label_hpo, defintion_hpo, relationships_hpo
             if self.path is None:
+
                 config = config_loader.load_config()
                 self.path = config["chroma_db_path"]
                 self.client = chromadb.PersistentClient(path=self.path)
+
             else:
                 self.client = chromadb.PersistentClient(path=self.path)
             if self.ont_hp is None and self.collection_name and self.auto_create == False:
                 self.ont_hp = self.client.get_collection(self.collection_name)
         else:
             self.handle_auto_create()
-        # if self.auto_create:
-        #     self.ont_hp = self.client.get_or_create_collection(self.collection_name)
 
     @property
     def disease_weighted_avg_embeddings_collection(self) -> Collection:
