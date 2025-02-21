@@ -15,10 +15,10 @@ from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasur
 
 current_dir = Path(__file__).parent
 repo_root = current_dir.parents[1]
-LIRICAL_PHENOPACKETS = "385_lirical_phenopackets"
+LIRICAL_PHENOPACKETS = "LIRICAL_phenopackets"
 Z_PHENOPACKET_TEST = "10_z_phenopackets"
 ALL_PHENOPACKETS = "5213_phenopackets"
-# ALL_PHENOPACKETS = "7702_all_phenopackets"
+output_dir = Path(repo_root / "output")
 
 @dataclass
 class ElderPhEvalRunner(PhEvalRunner):

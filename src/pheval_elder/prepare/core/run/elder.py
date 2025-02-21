@@ -56,9 +56,6 @@ class ElderRunner:
         _ = self.data_processor.hp_embeddings
         _ = self.data_processor.disease_to_hps
         _ = self.data_processor.disease_to_hps_with_frequencies
-        print(len(self.data_processor.hp_embeddings))
-        print(len(self.data_processor.disease_to_hps))
-        print(len(self.data_processor.disease_to_hps_with_frequencies))
 
     def setup_collections(self):
         # self.disease_service.process_data()
@@ -100,8 +97,6 @@ class ElderRunner:
         tcp = OptimizedTermSetPairwiseComparison(data_processor=self.data_processor)
         tcp.precompute_similarities(phenotype_sets)
         return process_phenotype_sets_parallel(phenotype_sets, tcp, nr_of_results)
-# if __name__ == "__main__":
-#     elder = ElderRunner(collection_name="lrd_hpo", strategy="tpc")
-#     elder.initialize_data()
+
 
 
