@@ -1,5 +1,5 @@
 from pathlib import Path
-from pheval_elder.runner import ElderPhEvalRunner
+from pheval_elder.dis_avg_emb_runner import DiseaseAvgEmbRunner
 from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 import logging
 
@@ -35,7 +35,7 @@ def elder():
 
 def run_elder(strategy: str, embedding_model: str, nr_of_phenopackets: str, collection_name: str, nr_of_results: int,  db_collection_path: str = None, tpc_comparison: bool = False):
     """Reusable function to initialize and run the ElderPhEvalRunner."""
-    runner = ElderPhEvalRunner(
+    runner = DiseaseAvgEmbRunner(
         input_dir=Path("."),
         testdata_dir=Path("."),
         tmp_dir=Path("."),
@@ -71,7 +71,7 @@ def average(embedding_model, nr_of_phenopackets, nr_of_results, db_collection_pa
     NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 7702).
 
     Examples:
-        elder average small 385 --collection_name custom_collection
+        elder average small 385 --collection_name lrd_hpo
         elder average ada 7702 --collection_name definition_hpo
     """
     run_elder(
@@ -98,7 +98,7 @@ def weighted_average(embedding_model, nr_of_phenopackets, nr_of_results, db_coll
     NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 7702).
 
     Examples:
-        elder weighted-average small 385 --collection_name custom_collection
+        elder weighted-average small 385 --collection_name lrd_hpo
         elder weighted-average ada 7702 --collection_name definition_hpo
     """
     run_elder(
@@ -123,7 +123,7 @@ def termset_pairwise_comparison(embedding_model, nr_of_phenopackets, nr_of_resul
     NR_OF_PHENOPACKETS: Number of phenopackets to process (e.g., 385 or 7702).
 
     Examples:
-        elder termset-pairwise-comparison small 385 --collection_name custom_collection
+        elder termset-pairwise-comparison small 385 --collection_name lrd_hpo
         elder termset-pairwise-comparison ada 7702 --collection_name definition_hpo
     """
     run_elder(

@@ -156,11 +156,12 @@ class QueryService:
 
         query_params = {
             "query_embeddings": [avg_embedding.tolist()],
-            "include": ["embeddings", "distances"],
+            "include": ["metadatas","embeddings", "distances"],
             "n_results": n_results
         }
 
         query_results = self.disease_service.disease_new_avg_embeddings_collection.query(**query_params)
+        # print("query", query_results)
         sorted_results = self.process_query_results(query_results=query_results)
         return sorted_results
 
@@ -218,9 +219,12 @@ class QueryService:
     def process_query_results(query_results) -> list[Any]:
         disease_ids = query_results['ids'][0] if 'ids' in query_results and query_results['ids'] else []
         distances = query_results['distances'][0] if 'distances' in query_results and query_results['distances'] else []
-        # labels = query_results['labels'][0] if 'labels' in query_results and query_results[
-        #     'labels'] else []  # Fetching labels
-        sorted_results = sorted(zip(disease_ids, distances), key=lambda x: x[1])  # remember to add label if needed
+        disease_names = (
+            [metadata['disease_name'] for metadata in query_results['metadatas'][0]]
+            if 'metadatas' in query_results and query_results['metadatas']
+            else []
+        )
+        sorted_results = sorted(zip(disease_ids, disease_names, distances), key=lambda x: x[2])
         return sorted_results
 
     def binary_search_max_results_nocol(

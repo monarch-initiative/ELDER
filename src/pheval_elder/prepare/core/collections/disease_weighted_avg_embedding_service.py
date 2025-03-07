@@ -28,47 +28,38 @@ class DiseaseWeightedAvgEmbeddingService(BaseService):
         #     return self.disease_weighted_avg_embeddings_collection
 
         batch_size = 100
-        # TODO: num_disease should be batch_size as we will make a new one every batch ?
         num_diseases = len(self.disease_to_hps_with_frequencies_dp)
 
-        all_embeddings = np.zeros((batch_size, 1536))  # Embedding Size
+        all_embeddings = np.zeros((batch_size, 1536))
         all_diseases = np.empty(batch_size, dtype=object)
 
         current_index = 0
-        embedding_calc_time = 0
-        upsert_time = 0
 
-        for disease in tqdm(self.disease_to_hps_with_frequencies_dp.keys(), total=num_diseases):
+        for disease, disease_and_phenotype_data in tqdm(self.disease_to_hps_with_frequencies_dp.items(), total=num_diseases):
             start = time.time()
+            disease_name = disease_and_phenotype_data.get("disease_name")
             average_weighted_embedding = self.data_processor.calculate_weighted_llm_embeddings(
                 disease=disease)
-            embedding_calc_time += time.time() - start
 
-            all_diseases[current_index] = disease
+            all_diseases[current_index] = (disease,disease_name)
             all_embeddings[current_index] = average_weighted_embedding
             current_index += 1
 
-            # Check if the current batch is full, and if so, upsert it to the database
             if current_index % batch_size == 0:
                 start = time.time()
                 self.upsert_batch(all_diseases, all_embeddings)
-                upsert_time += time.time() - start
                 current_index = 0
 
-        # Handling the last batch if it's not full
         if current_index > 0:
-            start = time.time()
             self.upsert_batch(all_diseases[:current_index], all_embeddings[:current_index])
-            upsert_time += time.time() - start
-
-        print(f"Total time for embedding calculations: {embedding_calc_time}s")
-        print(f"Total time for upsert operations: {upsert_time}s")
 
         return self.disease_weighted_avg_embeddings_collection
 
-    def upsert_batch(self, disease_ids, embeddings):
-        valid_indices = [i for i, disease in enumerate(disease_ids) if disease is not None]
-        filtered_ids = [disease_ids[i] for i in valid_indices]
-        metadatas = [{"type": "disease"}] * len(disease_ids)
-        self.disease_weighted_avg_embeddings_collection.upsert(ids=filtered_ids, embeddings=embeddings,
-                                                               metadatas=metadatas)
+    def upsert_batch(self, disease_data, embeddings):
+        valid_indices = [i for i, disease in enumerate(disease_data) if disease is not None]
+        filtered_entries = [disease_data[i] for i in valid_indices]
+        filtered_embeddings = embeddings[valid_indices]
+        ids = [x[0] for x in filtered_entries]
+        disease_name = [{"disease_name": y[0]} for y in filtered_entries]
+        self.disease_weighted_avg_embeddings_collection.upsert(ids=ids, embeddings=filtered_embeddings,
+                                                               metadatas=disease_name)

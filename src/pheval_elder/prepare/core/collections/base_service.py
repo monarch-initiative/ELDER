@@ -13,13 +13,12 @@ class BaseService(ABC):
     data_processor: Optional[DataProcessor]
     disease_to_hps: Dict = None
     disease_to_hps_with_frequencies_dp: Dict = None
-    disease_new_avg_embeddings_collection: Dict = None
-    disease_weighted_avg_embeddings_collection: Dict = None
+    disease_new_avg_embeddings_collection: Collection = None
+    disease_weighted_avg_embeddings_collection: Collection = None
 
     def __post_init__(self):
         self.hp_embeddings = self.data_processor.hp_embeddings
         self.disease_to_hps = self.data_processor.disease_to_hps
-        # print(self.disease_to_hps)
         self.disease_to_hps_with_frequencies_dp = self.data_processor.disease_to_hps_with_frequencies
         self.disease_new_avg_embeddings_collection = self.data_processor.db_manager.disease_avg_embeddings_collection
         self.disease_weighted_avg_embeddings_collection = self.data_processor.db_manager.disease_weighted_avg_embeddings_collection

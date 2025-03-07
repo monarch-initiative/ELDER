@@ -2,8 +2,7 @@ import gc
 import os
 import time
 from collections import defaultdict
-from itertools import islice
-from typing import List, Iterator, TypeVar, Tuple, Dict
+from typing import List, Tuple
 
 import numpy as np
 import psutil
@@ -177,11 +176,10 @@ def process_phenotype_sets_parallel(
 
     distributed_sets = distribute_sets_evenly(phenotype_sets, num_workers)
 
-    # Prepare arguments for each worker
     process_args = [
         (worker_sets, nr_of_results, processing_data)
         for worker_sets in distributed_sets
-        if worker_sets  # Only include non-empty worker sets
+        if worker_sets
     ]
 
     with mp.Pool(num_workers) as pool:
@@ -199,26 +197,13 @@ def process_phenotype_sets_parallel(
     \n           ----------               \n""")
     gc.collect()
 
-    # Initialize results list with empty lists
     final_results = [[] for _ in range(len(phenotype_sets))]
 
-    # Place results in their original positions
     for worker_results in batch_results:
         for orig_idx, result_list in worker_results:
             final_results[orig_idx] = result_list
 
     return final_results
-
-
-T = TypeVar('T')
-def batch(iterable: Iterator[T], n: int = 5) -> Iterator[List[T]]:
-    """Yield successive n-sized chunks from iterable."""
-    it = iter(iterable)
-    while True:
-        chunk = list(islice(it, n))
-        if not chunk:
-            break
-        yield chunk
 
 
 def distribute_sets_evenly(phenotype_sets: List[List[str]], num_workers: int) -> List[List[Tuple[int, List[str]]]]:
@@ -227,26 +212,17 @@ def distribute_sets_evenly(phenotype_sets: List[List[str]], num_workers: int) ->
     Returns a list where each inner list contains tuples of (original_index, phenotype_set).
     """
 
-    # Create list of (index, set, size) tuples
     indexed_sets = [(i, s, len(s)) for i, s in enumerate(phenotype_sets)]
-
-    # Sort by size in descending order, keeping original indices
     sorted_sets = sorted(indexed_sets, key=lambda x: x[2], reverse=True)
 
-    # Initialize workers with empty lists
     workers = [[] for _ in range(num_workers)]
     worker_loads = [0] * num_workers
 
-    # Distribute sets using a greedy approach
     for orig_idx, phenotype_set, size in sorted_sets:
-        # Find worker with minimum current load
         min_load_worker = min(range(num_workers), key=lambda i: worker_loads[i])
-
-        # Assign set to that worker (store only index and set, not size)
         workers[min_load_worker].append((orig_idx, phenotype_set))
         worker_loads[min_load_worker] += size
-
-    # Print distribution statistics
+    # debugging
     print("\nWorkload distribution across workers:")
     for i, worker_sets in enumerate(workers):
         total_size = sum(len(s) for _, s in worker_sets)

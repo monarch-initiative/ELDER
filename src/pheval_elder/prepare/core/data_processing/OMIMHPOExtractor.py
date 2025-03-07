@@ -4,7 +4,9 @@ from collections import defaultdict
 from io import StringIO
 from io import BufferedWriter
 from enum import Enum
-from typing import Dict
+from typing import Dict, Union
+
+from pheval_elder.prepare.core.utils.obsolete_hp_mapping import update_hpo_id
 
 
 class OMIMHPOExtractor:
@@ -33,6 +35,7 @@ class OMIMHPOExtractor:
                 continue
 
             omim_id, disease_name, qualifier, hpo_id, frequency = parts[0], parts[1], parts[2], parts[3], parts[7]
+            hpo_id = update_hpo_id(hpo_id)
 
             if frequency:
                 frequency_percentage = frequency.strip("%")
@@ -50,6 +53,7 @@ class OMIMHPOExtractor:
         print(len(omim_hpo_dict))
         return omim_hpo_dict
 
+    @staticmethod
     def extract_omim_hpo_mappings_default(data):
         """
         Extracts OMIM to HPO mappings from the provided data.
@@ -77,7 +81,8 @@ class OMIMHPOExtractor:
 
             omim_id, disease_name, hpo_id = parts[0].strip(), parts[1].strip(), parts[3].strip()
 
-            omim_hpo_dict[omim_id]['phenotypes'].append(hpo_id)
+            updated_id = update_hpo_id(hpo_id)
+            omim_hpo_dict[omim_id]['phenotypes'].append(updated_id)
             omim_hpo_dict[omim_id]['disease_name'] = disease_name
 
         final_omim_hpo_dict = {k: {"disease_name": v["disease_name"], "phenotypes": sorted(v["phenotypes"])} for k,v in omim_hpo_dict.items()}
@@ -99,14 +104,14 @@ class OMIMHPOExtractor:
         return final_omim_hpo_dict
 
     @staticmethod
-    def extract_omim_hpo_mappings_with_frequencies_1(data) -> Dict:
+    def extract_omim_hpo_mappings_with_frequencies_1(data) -> Dict[str, Dict[str, Union[str, Dict[str, float]]]]:
         """
                 Extracts OMIM to HPO mappings from the provided data.
 
                 :param data: String containing the data with OMIM and HPO information.
                 :return: Dictionary with OMIM IDs as keys and lists of HPO IDs as values.
                 """
-        omim_hpo_dict = {}
+        omim_hpo_dict = defaultdict(lambda: {"disease_name": None, "phenotypes_and_frequencies": {}})
         lines = data.split("\n")
         header_found = False
         # Frequency mapping for special HPO terms referring to freq in DAG
@@ -134,7 +139,8 @@ class OMIMHPOExtractor:
             if len(parts) < 8:
                 continue
 
-            omim_id, qualifier, hpo_id, frequency = parts[0], parts[2], parts[3], parts[7]
+            omim_id, disease_name, qualifier, hpo_id, frequency = parts[0], parts[1], parts[2], parts[3], parts[7]
+            hpo_id = update_hpo_id(hpo_id)
             if not omim_id or not hpo_id:
                 continue
 
@@ -149,7 +155,28 @@ class OMIMHPOExtractor:
                 frequency_proportion = 0.5
 
             if qualifier != "NOT":
-                omim_hpo_dict.setdefault(omim_id, {})[hpo_id] = frequency_proportion
+                omim_hpo_dict[omim_id]['phenotypes_and_frequencies'][hpo_id] = frequency_proportion
+                omim_hpo_dict[omim_id]['disease_name'] = disease_name
+
+                """ 
+                "WAS"
+                {
+                    "OMIM:101600": {
+                        "HP:00001": 0.5,
+                        "Hp:00002": 0.3
+                    }
+                }
+
+                { 
+                "IS"
+                    "OMIM:101600": {
+                        "phenotypes_and_frequencies":{
+                            "HP:00001": 0.5,
+                            "Hp:00002": 0.3
+                    },
+                    "disease_name" : "Marfan Syndrome", }
+                }
+                """
 
         return omim_hpo_dict
 

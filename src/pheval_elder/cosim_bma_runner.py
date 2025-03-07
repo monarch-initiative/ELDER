@@ -14,7 +14,7 @@ from tqdm import tqdm
 from pheval_elder.prepare.core.run.elder import ElderRunner
 from pheval_elder.prepare.core.utils.obsolete_hp_mapping import update_hpo_id
 from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
-from pheval_elder.runner import Z_PHENOPACKET_TEST, LIRICAL_PHENOPACKETS, ALL_PHENOPACKETS, output_dir, repo_root
+from pheval_elder.dis_avg_emb_runner import Z_PHENOPACKET_TEST, LIRICAL_PHENOPACKETS, ALL_PHENOPACKETS, output_dir, repo_root
 
 
 @dataclass
@@ -163,9 +163,6 @@ class BestMatchRunner(PhEvalRunner):
 
 
 if __name__ == "__main__":
-    # TODO run all again (update_hpo)
-    #  mxbai - done
-    # rest all running
     tcp_runner = BestMatchRunner(
         input_dir=repo_root,
         testdata_dir=Path(".."),
@@ -174,86 +171,13 @@ if __name__ == "__main__":
         config_file=Path(".."),
         version="0.3.2",
         similarity_measure=SimilarityMeasures.COSINE,
-        collection_name="large3_lrd_hpo_embeddings",
+        collection_name="mxbai_lrd_hpo_embeddings",
         strategy="tpc",
-        embedding_model="large3",
-        nr_of_phenopackets="5213",
+        embedding_model="zzmxbai3zz",
+        nr_of_phenopackets="5084",
         nr_of_results=10,
-        db_collection_path="/Users/ck/Monarch/elder/emb_data/models/large3",
+        db_collection_path="/Users/ck/Monarch/elder/emb_data/models/mxbai-l",
     )
     tcp_runner.prepare()
     tcp_runner.run()
-    # tcp_runner.post_process()
-    #
-    # tcp_runner = BestMatchRunner(
-    #     input_dir=repo_root,
-    #     testdata_dir=Path(".."),
-    #     tmp_dir=Path(".."),
-    #     output_dir=output_dir,
-    #     config_file=Path(".."),
-    #     version="0.3.2",
-    #     similarity_measure=SimilarityMeasures.COSINE,
-    #     collection_name="small3_lrd_hpo_embeddings",
-    #     strategy="tpc",
-    #     embedding_model="small3",
-    #     nr_of_phenopackets="5213",
-    #     nr_of_results=10,
-    #     db_collection_path="/Users/ck/Monarch/elder/emb_data/models/small3",
-    # )
-    # tcp_runner.prepare()
-    # tcp_runner.run()
-    #
-    # tcp_runner = BestMatchRunner(
-    #     input_dir=repo_root,
-    #     testdata_dir=Path(".."),
-    #     tmp_dir=Path(".."),
-    #     output_dir=output_dir,
-    #     config_file=Path(".."),
-    #     version="0.3.2",
-    #     similarity_measure=SimilarityMeasures.COSINE,
-    #     collection_name="ada002_lrd_hpo_embeddings",
-    #     strategy="tpc",
-    #     embedding_model="ada",
-    #     nr_of_phenopackets="5213",
-    #     nr_of_results=10,
-    #     db_collection_path="/Users/ck/Monarch/elder/emb_data/models/ada002",
-    # )
-    # tcp_runner.prepare()
-    # tcp_runner.run()
-    #
-    # tcp_runner = BestMatchRunner(
-    #     input_dir=repo_root,
-    #     testdata_dir=Path(".."),
-    #     tmp_dir=Path(".."),
-    #     output_dir=output_dir,
-    #     config_file=Path(".."),
-    #     version="0.3.2",
-    #     similarity_measure=SimilarityMeasures.COSINE,
-    #     collection_name="bge-m3_lrd_hpo_embeddings",
-    #     strategy="tpc",
-    #     embedding_model="bge-m3",
-    #     nr_of_phenopackets="5213",
-    #     nr_of_results=10,
-    #     db_collection_path="/Users/ck/Monarch/elder/emb_data/models/bge-m3",
-    # )
-    # tcp_runner.prepare()
-    # tcp_runner.run()
-    #
-    # tcp_runner = BestMatchRunner(
-    #     input_dir=repo_root,
-    #     testdata_dir=Path(".."),
-    #     tmp_dir=Path(".."),
-    #     output_dir=output_dir,
-    #     config_file=Path(".."),
-    #     version="0.3.2",
-    #     similarity_measure=SimilarityMeasures.COSINE,
-    #     collection_name="nomic_lrd_hpo_embeddings",
-    #     strategy="tpc",
-    #     embedding_model="nomic",
-    #     nr_of_phenopackets="5213",
-    #     nr_of_results=10,
-    #     db_collection_path="/Users/ck/Monarch/elder/emb_data/models/nomic",
-    # )
-    # tcp_runner.prepare()
-    # tcp_runner.run()
-    #
+
