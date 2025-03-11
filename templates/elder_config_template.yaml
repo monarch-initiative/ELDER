@@ -1,0 +1,78 @@
+# Elder configuration template
+# Use this template as a starting point for your configuration
+
+# Database settings
+database:
+  # Path to ChromaDB directory
+  chroma_db_path: "/path/to/chromadb/directory"
+  # Name of the collection in ChromaDB
+  collection_name: "collection_that_holds_data"
+  # Similarity measure (COSINE, EUCLIDEAN, DOT_PRODUCT)
+  similarity_measure: "COSINE"
+
+# Runner settings
+runner:
+  # Type of runner to use
+  # Options: avg, wgt_avg, tpc, graph_emb
+  runner_type: "avg"
+  
+  # Embedding model to use
+  # Options: small, large, ada, mxbai, bge, nomic, custom
+  model_type: "large"
+  
+  # Custom model name (required if model_type is "custom")
+  custom_model_name: ""
+  
+  # Number of phenopackets to process (e.g., 385 or 5084)
+  nr_of_phenopackets: "5084"
+  
+  # Number of results to return
+  nr_of_results: 10
+  
+  # Path to the model (optional)
+  # If not provided, it will be derived from model_type or custom_model_name
+  model_path: ""
+
+# Processing settings
+processing:
+  # Whether to use multiprocessing
+  use_multiprocessing: true
+  
+  # Number of worker processes to use
+  # If null, all available cores will be used
+  num_workers: null
+  
+  # Batch size for multiprocessing
+  batch_size: 100
+
+# Output settings
+output:
+  # Directory for output files
+  output_dir: "./output"
+  
+  # Results directory name (optional)
+  # If not provided, it will be automatically generated
+  results_dir_name: ""
+  
+  # Results subdirectory name (optional)
+  # If not provided, it will be automatically generated
+  results_sub_dir: ""
+
+# Paths for data sources
+data_paths:
+  # Directory containing phenopackets
+  phenopackets_dir: "5084_phenopackets"
+  
+  # Directory containing test phenopackets
+  test_phenopackets_dir: "10_z_phenopackets"
+  
+  # Directory containing LIRICAL phenopackets
+  lirical_phenopackets_dir: "LIRICAL_phenopackets"
+
+# Feature flags
+features:
+  # Whether to use custom descriptions
+  use_custom_descriptions: false
+  
+  # Whether to use graph embeddings
+  use_graph_embeddings: false

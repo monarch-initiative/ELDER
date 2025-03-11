@@ -1,0 +1,21 @@
+# Configuration for average embedding strategy
+
+database:
+  chroma_db_path: "/Users/ck/Monarch/elder/emb_data/models/large3"
+  collection_name: "lrd_hpo_embeddings"
+  similarity_measure: "COSINE"
+
+runner:
+  runner_type: "avg"
+  model_type: "large"
+  nr_of_phenopackets: "5084"
+  nr_of_results: 10
+
+processing:
+  use_multiprocessing: true
+
+output:
+  output_dir: "./output"
+
+data_paths:
+  phenopackets_dir: "5084_phenopackets"

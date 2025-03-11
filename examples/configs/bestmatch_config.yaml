@@ -1,0 +1,21 @@
+# Configuration for best match (term-set pairwise comparison) strategy
+
+database:
+  chroma_db_path: "/Users/ck/Monarch/elder/emb_data/models/mxbai-l"
+  collection_name: "mxbai_lrd_hpo_embeddings"
+  similarity_measure: "COSINE"
+
+runner:
+  runner_type: "tpc"
+  model_type: "mxbai"
+  nr_of_phenopackets: "5084"
+  nr_of_results: 10
+
+processing:
+  use_multiprocessing: true
+
+output:
+  output_dir: "./output"
+
+data_paths:
+  phenopackets_dir: "5084_phenopackets"

@@ -2,10 +2,9 @@ import logging
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import json
-from csv import excel
 from dataclasses import dataclass
 from functools import cached_property, cache
-from typing import Dict, Iterator
+from typing import Dict, Iterator, Any
 from pathlib import Path
 import numpy as np
 from chromadb.types import Collection
@@ -27,13 +26,14 @@ class DataProcessor:
         self._disease_to_hps_with_frequencies = None
 
     @cached_property
-    def hp_embeddings(self) -> Dict:
+    def hp_embeddings(self) -> Dict[str, Dict[str, Any]]:
         if self._hp_embeddings is None:
             self._hp_embeddings = self.create_hpo_id_to_embedding(self.db_manager.ont_hp)
         if len(self._hp_embeddings) > 0:
             return self._hp_embeddings
         else:
             logger.warning(f"No HPO embeddings found for {self.db_manager.ont_hp}")
+            return {}
 
     @cached_property
     def disease_to_hps_with_frequencies(self) -> Dict:
@@ -54,7 +54,7 @@ class DataProcessor:
         return self._disease_to_hps
 
     @staticmethod
-    def create_hpo_id_to_embedding(collection: Collection) -> Dict:
+    def create_hpo_id_to_embedding(collection: Collection) -> Dict[str, Dict[str, Any]]:
         """
         Create a dictionary mapping HPO IDs to embeddings.
         """
@@ -84,8 +84,6 @@ class DataProcessor:
                 logger.warning(f"Warning: Missing 'original_id' in metadata: {metadata}")
         return hpo_id_to_data
 
-
-
     @staticmethod
     def create_disease_to_hps_dict(collection: Collection) -> Dict:
         """
@@ -109,9 +107,8 @@ class DataProcessor:
         embeddings = [embeddings_dict[hp_id]["embeddings"] for hp_id in hps if hp_id in embeddings_dict]
         return np.mean(embeddings, axis=0) if embeddings else []
 
-
     @staticmethod
-    def convert_embeddings_to_numpy(embeddings_dict):
+    def convert_embeddings_to_numpy(embeddings_dict: Dict[str, Dict[str, Any]]) -> Dict[str, Dict[str, np.ndarray]]:
         return {k: {'embeddings': np.array(v['embeddings'])} for k, v in embeddings_dict.items()}
 
     @staticmethod
@@ -128,7 +125,6 @@ class DataProcessor:
             return np.sum(weighted_embeddings, axis=0) / total_weight
         return np.array([])
 
-
     def calculate_weighted_llm_embeddings(self, disease: str) -> np.ndarray:
         weighted_embeddings = np.zeros_like(next(iter(self.hp_embeddings.values()))['embeddings'])
         total_weight = 0
@@ -138,7 +134,8 @@ class DataProcessor:
             if embedding is not None:
                 weighted_embeddings += proportion * embedding
                 total_weight += proportion
-        return weighted_embeddings / total_weight if total_weight > 0 else np.array([])
-
-
+        
+        if total_weight > 0:
+            return weighted_embeddings / total_weight
+        return np.array([])
 

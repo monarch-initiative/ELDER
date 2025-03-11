@@ -1,2 +1,39 @@
-chroma_db_path: "/Users/ck/Monarch/elder/emb_data/models/large3"
-#"/Users/carlo/chromadb/ada-002-hp"
+# Elder unified configuration file
+
+# Database settings
+database:
+  chroma_db_path: "/Users/ck/Monarch/elder/emb_data/models/large3"
+  collection_name: "lrd_hpo_embeddings"
+  similarity_measure: "COSINE"  # COSINE, EUCLIDEAN, DOT_PRODUCT
+
+# Runner settings
+runner:
+  runner_type: "avg"  # avg, wgt_avg, tpc, graph_emb
+  model_type: "large"  # small, large, ada, mxbai, bge, nomic, custom
+  nr_of_phenopackets: "5084"
+  nr_of_results: 10
+  custom_model_name: ""  # Optional, used when model_type is "custom"
+  model_path: ""  # Optional, if empty will be derived from model_type or custom_model_name
+
+# Processing settings
+processing:
+  use_multiprocessing: true
+  num_workers: null  # null = use all available cores
+  batch_size: 100
+
+# Output settings
+output:
+  output_dir: "./output"
+  results_dir_name: ""  # Optional, will be auto-generated if empty
+  results_sub_dir: ""  # Optional, will be auto-generated if empty
+
+# Paths for data sources
+data_paths:
+  phenopackets_dir: "5084_phenopackets"
+  test_phenopackets_dir: "10_z_phenopackets"
+  lirical_phenopackets_dir: "LIRICAL_phenopackets"
+
+# Feature flags
+features:
+  use_custom_descriptions: false
+  use_graph_embeddings: false
