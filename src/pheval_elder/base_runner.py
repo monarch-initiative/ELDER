@@ -19,7 +19,6 @@ from pheval_elder.prepare.config.config_validator import (
     validate_config, ConfigValidationError
 )
 from pheval_elder.prepare.core.run.elder import ElderRunner
-from pheval_elder.prepare.core.utils.similarity_measures import SimilarityMeasures
 from pheval_elder.prepare.core.utils.logging import get_logger
 
 
@@ -36,13 +35,11 @@ class BaseElderRunner(PhEvalRunner):
     config_file: Path
     version: str
     
-    # Configuration properties
     config: ElderConfig = field(default=None)
     results: List[Any] = field(default_factory=list)
     current_file_name: Optional[str] = None
     elder_runner: Optional[ElderRunner] = None
     
-    # Logger
     logger = get_logger("base_runner")
 
     def __init__(
@@ -53,7 +50,6 @@ class BaseElderRunner(PhEvalRunner):
         output_dir: Path,
         config_file: Path,
         version: str,
-        config_path: Optional[Union[str, Path]] = None,
         **kwargs,
     ):
         """
@@ -69,6 +65,7 @@ class BaseElderRunner(PhEvalRunner):
             config_path: Path to the Elder configuration file (optional)
             **kwargs: Additional keyword arguments
         """
+        print("call call")
         # Initialize PhEvalRunner
         super().__init__(
             input_dir=input_dir,
@@ -79,12 +76,33 @@ class BaseElderRunner(PhEvalRunner):
             version=version,
             **kwargs,
         )
-        
-        # Load configuration
-        self.logger.info(f"Loading configuration from {config_path or 'default locations'}")
-        self.config = get_config(config_path)
-        
-        # Validate configuration
+
+        self.config = None
+        self.results = []
+        self.current_file_name = None
+        self.elder_runner = None
+
+
+    def _set_config(
+            self,
+            config_path: Optional[Union[str, Path]] = None,
+            config_obj: Optional[ElderConfig] = None
+    ) -> None:
+        """
+        Load and apply the configuration.
+        This method should be called immediately after instance creation.
+
+        Args:
+            config_path: Path to the configuration file.
+            config_obj: A preloaded ElderConfig instance (optional).
+        """
+        if config_obj is not None:
+            self.config = config_obj
+            self.logger.info("Using preloaded configuration object.")
+        else:
+            self.logger.info(f"Loading configuration from {config_path or 'default locations'}")
+            self.config = get_config(config_path)
+
         try:
             warnings = validate_config(self.config)
             for warning in warnings:
@@ -92,8 +110,7 @@ class BaseElderRunner(PhEvalRunner):
         except ConfigValidationError as e:
             self.logger.error(f"Configuration validation error: {e}")
             raise
-        
-        # Initialize ElderRunner
+
         self._init_elder_runner()
 
     def _init_elder_runner(self) -> None:
@@ -119,7 +136,6 @@ class BaseElderRunner(PhEvalRunner):
         This typically initializes data and sets up collections.
         """
         self.logger.info("Preparing runner")
-        # Initialize data and set up collections
         self.elder_runner.initialize_data()
         self.elder_runner.setup_collections()
 
@@ -152,7 +168,6 @@ class BaseElderRunner(PhEvalRunner):
         repo_root = Path(__file__).parent.parents[1]
         phenopackets_dir = config.misc.get("data_paths", {}).get("phenopackets_dir", "5084_phenopackets")
         
-        # Convert to absolute path if not already
         if not os.path.isabs(phenopackets_dir):
             phenopackets_dir = repo_root / phenopackets_dir
             
@@ -163,7 +178,7 @@ class BaseElderRunner(PhEvalRunner):
         cls,
         config_path: Optional[Union[str, Path]] = None,
         version: str = "0.3.2",
-        **kwargs
+        config_overrides: Optional[Dict[str, Any]] = None,
     ):
         """
         Create a runner instance from configuration.
@@ -171,51 +186,60 @@ class BaseElderRunner(PhEvalRunner):
         Args:
             config_path: Path to the configuration file (optional)
             version: Version string (optional)
-            **kwargs: Additional keyword arguments to override configuration values
-            
+            config_overrides: additonal args to override default configuration
+
         Returns:
             An instance of the runner
         """
-        # Load configuration
         logger = get_logger("base_runner")
         logger.info(f"Creating runner from configuration: {config_path or 'default locations'}")
         config = get_config(config_path)
         
-        # Apply kwargs overrides to configuration
-        # This allows for command-line arguments to override configuration
-        # For example: runner_type="avg" would override config.runner.runner_type
-        for key, value in kwargs.items():
-            if key == "runner_type" and value:
-                config.runner.runner_type = RunnerType(value)
-                logger.info(f"Overriding runner_type with {value}")
-            elif key == "model_type" and value:
-                config.runner.model_type = ModelType(value)
-                logger.info(f"Overriding model_type with {value}")
-            elif key == "nr_of_phenopackets" and value:
-                config.runner.nr_of_phenopackets = str(value)
-                logger.info(f"Overriding nr_of_phenopackets with {value}")
-            elif key == "nr_of_results" and value:
-                config.runner.nr_of_results = int(value)
-                logger.info(f"Overriding nr_of_results with {value}")
-            elif key == "collection_name" and value:
-                config.db.collection_name = value
-                logger.info(f"Overriding collection_name with {value}")
-            elif key == "db_collection_path" and value:
-                config.db.chroma_db_path = value
-                logger.info(f"Overriding db_collection_path with {value}")
+        if config_overrides:
+            for key, value in config_overrides.items():
+                if key == "runner_type" and value:
+                    config.runner.runner_type = RunnerType(value)
+                    logger.info(f"Overriding runner_type with {value}")
+                elif key == "model_type" and value:
+                    config.runner.model_type = ModelType(value)
+                    logger.info(f"Overriding model_type with {value}")
+                elif key == "nr_of_phenopackets" and value:
+                    config.runner.nr_of_phenopackets = str(value)
+                    logger.info(f"Overriding nr_of_phenopackets with {value}")
+                elif key == "nr_of_results" and value:
+                    config.runner.nr_of_results = int(value)
+                    logger.info(f"Overriding nr_of_results with {value}")
+                elif key == "collection_name" and value:
+                    config.db.collection_name = value
+                    logger.info(f"Overriding collection_name with {value}")
+                elif key == "db_collection_path" and value:
+                    config.db.chroma_db_path = value
+                    # config.runner.db_path = config.db.chroma_db_path
+                    logger.info(f"Overriding db_collection_path with {value}")
         
-        # Create paths
         repo_root = Path(__file__).parent.parents[1]
         output_dir = repo_root / "output"
-        
-        # Create runner instance
-        return cls(
+
+        # Create the instance using only the expected parameters of the super/parent class.
+        # -----------------------------------------------------------------
+        # We cannot pass extra parameters (like `config_path` or `config_obj`) because
+        # the parent class (PhEvalRunner) is a dataclass. Its auto-generated __init__
+        # and __post_init__ will raise an error if unexpected keyword arguments are provided.
+        # Therefore, we create the instance with only those parameters that PhEvalRunner expects.
+        instance = cls(
             input_dir=repo_root,
             testdata_dir=Path(".."),
             tmp_dir=Path(".."),
             output_dir=output_dir,
-            config_file=Path(".."),
+            config_file=config_path,
             version=version,
-            config_path=config_path,
-            **kwargs
         )
+        # Configure the instance.
+        # --------------------------------
+        # After instance creation, we immediately set the configuration by calling the
+        # _set_config() method. This method loads (or accepts a preloaded) configuration,
+        # applies any necessary overrides, validates the configuration, and initializes the
+        # internal ElderRunner. This two-step process avoids passing extra keyword arguments
+        # to the parent's initializer.
+        instance._set_config(config_path=config_path, config_obj=config)
+        return instance

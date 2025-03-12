@@ -30,29 +30,22 @@ def setup_logging(
     Returns:
         Logger instance
     """
-    # Create logger
     logger = logging.getLogger("elder")
     logger.setLevel(level)
     
-    # Remove existing handlers
     for handler in logger.handlers[:]:
         logger.removeHandler(handler)
     
-    # Create formatter
     formatter = logging.Formatter(log_format, date_format)
     
-    # Create console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     
-    # Create file handler if log file is provided
     if log_file:
-        # Create directory if it doesn't exist
         log_path = Path(log_file).parent
         os.makedirs(log_path, exist_ok=True)
         
-        # Create file handler
         file_handler = logging.FileHandler(log_file)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
@@ -60,7 +53,6 @@ def setup_logging(
     return logger
 
 
-# Default logger
 logger = setup_logging()
 
 

@@ -48,6 +48,7 @@ def main(verbose: int, quiet: bool):
     "--config", 
     "-c", 
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
+    default="elder_config.yaml",
     help="Path to Elder configuration file"
 )
 @click.pass_context
@@ -104,18 +105,18 @@ def average(ctx, model, phenopackets, results, collection, db_path):
     Example:
         elder average --model large --phenopackets 5084 --results 10
     """
-    # Create runner from configuration
     runner = DiseaseAvgEmbRunner.from_config(
-        config_path=ctx.obj.get("config_path"),
-        runner_type=RunnerType.AVERAGE.value,
-        model_type=model,
-        nr_of_phenopackets=phenopackets,
-        nr_of_results=results,
-        collection_name=collection,
-        db_collection_path=db_path,
+            config_path=ctx.obj.get("config_path"),
+            config_overrides={
+            "runner_type": RunnerType.AVERAGE.value,
+            "model_type" : model,
+            "nr_of_phenopackets" : phenopackets,
+            "nr_of_results" : results,
+            "collection_name" : collection,
+            "db_collection_path" : db_path,
+        }
     )
     
-    # Run analysis
     runner.prepare()
     runner.run()
 
@@ -162,18 +163,18 @@ def weighted(ctx, model, phenopackets, results, collection, db_path):
     Example:
         elder weighted --model ada --phenopackets 5084 --results 10
     """
-    # Create runner from configuration
     runner = DisWgtAvgEmbRunner.from_config(
         config_path=ctx.obj.get("config_path"),
-        runner_type=RunnerType.WEIGHTED_AVERAGE.value,
-        model_type=model,
-        nr_of_phenopackets=phenopackets,
-        nr_of_results=results,
-        collection_name=collection,
-        db_collection_path=db_path,
+        config_overrides={
+            "runner_type": RunnerType.WEIGHTED_AVERAGE.value,
+            "model_type": model,
+            "nr_of_phenopackets": phenopackets,
+            "nr_of_results": results,
+            "collection_name": collection,
+            "db_collection_path": db_path,
+        }
     )
     
-    # Run analysis
     runner.prepare()
     runner.run()
 
@@ -220,18 +221,18 @@ def bestmatch(ctx, model, phenopackets, results, collection, db_path):
     Example:
         elder bestmatch --model mxbai --phenopackets 5084 --results 10
     """
-    # Create runner from configuration
     runner = BestMatchRunner.from_config(
         config_path=ctx.obj.get("config_path"),
-        runner_type=RunnerType.BEST_MATCH.value,
-        model_type=model,
-        nr_of_phenopackets=phenopackets,
-        nr_of_results=results,
-        collection_name=collection,
-        db_collection_path=db_path,
+        config_overrides={
+            "runner_type": RunnerType.BEST_MATCH.value,
+            "model_type" : model,
+            "nr_of_phenopackets" : phenopackets,
+            "nr_of_results" : results,
+            "collection_name" : collection,
+            "db_collection_path" : db_path,
+        }
     )
     
-    # Run analysis
     runner.prepare()
     runner.run()
 
@@ -248,15 +249,12 @@ def generate_config(ctx, config_file, output):
     Example:
         elder generate-config template.yaml --output ./configs
     """
-    # Load template configuration
     config_data = ConfigLoader.load_from_yaml(config_file)
     
-    # Determine output path
     output_path = output or Path(".")
     output_path.mkdir(exist_ok=True, parents=True)
     output_file = output_path / "elder_config.yaml"
     
-    # Write configuration
     with open(output_file, "w") as f:
         import yaml
         yaml.dump(config_data, f, default_flow_style=False, sort_keys=False)
@@ -265,4 +263,5 @@ def generate_config(ctx, config_file, output):
 
 
 if __name__ == "__main__":
+    # call group callback and initialize click context object
     elder(obj={})

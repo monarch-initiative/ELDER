@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 Example script to demonstrate how to use the unified configuration system.
 
@@ -43,32 +42,35 @@ def main(config, strategy):
         python run_with_config.py --config ../elder_config.yaml --strategy wgt_avg
         python run_with_config.py --config ../elder_config.yaml --strategy tpc
     """
-    # Set up multiprocessing
     mp.set_start_method('fork', force=True)
     
-    # Create runner based on strategy
     if strategy == "avg":
         click.echo("Running average strategy...")
         runner = DiseaseAvgEmbRunner.from_config(
             config_path=config,
-            runner_type=RunnerType.AVERAGE.value,
+            config_overrides={
+                "runner_type": RunnerType.AVERAGE.value,
+            }
         )
     elif strategy == "wgt_avg":
         click.echo("Running weighted average strategy...")
         runner = DisWgtAvgEmbRunner.from_config(
             config_path=config,
-            runner_type=RunnerType.WEIGHTED_AVERAGE.value,
+            config_overrides={
+                "runner_type": RunnerType.WEIGHTED_AVERAGE.value,
+            }
         )
     elif strategy == "tpc":
         click.echo("Running best match (term-set pairwise comparison) strategy...")
         runner = BestMatchRunner.from_config(
             config_path=config,
-            runner_type=RunnerType.BEST_MATCH.value,
+            config_overrides={
+                "runner_type": RunnerType.BEST_MATCH.value,
+            }
         )
     else:
         raise ValueError(f"Invalid strategy: {strategy}")
     
-    # Run analysis
     runner.prepare()
     runner.run()
 

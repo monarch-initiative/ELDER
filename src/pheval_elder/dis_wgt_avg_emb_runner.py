@@ -18,6 +18,7 @@ from tqdm import tqdm
 
 import pheval_elder.prepare.core.collections.globals as g
 from pheval_elder.base_runner import BaseElderRunner
+from pheval_elder.prepare.config.config_loader import load_config, load_config_path
 from pheval_elder.prepare.config.unified_config import RunnerType
 from pheval_elder.prepare.core.utils.obsolete_hp_mapping import update_hpo_id
 
@@ -41,45 +42,35 @@ class DisWgtAvgEmbRunner(BaseElderRunner):
         3. Runs the weighted average embeddings analysis
         4. Processes the results
         """
-        # Get total number of phenopackets to process
         total_phenopackets = int(self.elder_runner.nr_of_phenopackets)
-        print(f"Running {total_phenopackets} phenopackets")
+        # print(f"Running {total_phenopackets} phenopackets")
         
-        # Get phenopackets directory and file list
         path = self.get_phenopackets_dir(self.config)
-        print(f"Reading phenopackets from {path}")
+        # print(f"Reading phenopackets from {path}")
         file_list = all_files(path)
         
-        # Initialize lists for phenotypes and file names
         phenotype_sets = []
         file_names = []
 
-        # Process each phenopacket
         for i, file_path in tqdm(enumerate(file_list, start=1), total=total_phenopackets):
             self.current_file_name = file_path.stem
-            # Read phenopacket
             phenopacket = phenopacket_reader(file_path)
             phenopacket_util = PhenopacketUtil(phenopacket)
-            # Extract observed phenotypes
             observed_phenotypes = phenopacket_util.observed_phenotypic_features()
             observed_phenotypes_hpo_ids = [
                 update_hpo_id(observed_phenotype.type.id) for observed_phenotype in observed_phenotypes
             ]
-            # Store file name and phenotypes
             file_names.append(file_path.name)
             phenotype_sets.append(observed_phenotypes_hpo_ids)
 
         # Initialize the global collection for multiprocessing
         g.global_wgt_avg_disease_embd_collection = self.elder_runner.disease_weighted_service.disease_new_avg_embeddings_collection
         
-        # Run analysis and process results
         if self.elder_runner is not None and self.elder_runner.strategy == "wgt_avg":
-            # Run analysis on all phenotype sets
             self.results = self.elder_runner.optimized_wgt_avg_analysis(
                 phenotype_sets, 
                 self.config.runner.nr_of_results
             )
-            # Process each result
             for file_name, result_set in zip(file_names, self.results):
                 if result_set:
                     self.current_file_name = file_name
@@ -98,16 +89,13 @@ class DisWgtAvgEmbRunner(BaseElderRunner):
         3. Moves the result files to the appropriate directory
         """
         if self.input_dir_config.disease_analysis and self.results:
-            # Create output file name and directories
             output_file_name = f"{self.current_file_name}"
             self.tmp_dir = self.pheval_disease_results_dir / "pheval_disease_results/"
             dest_dir = self.pheval_disease_results_dir / self.elder_runner.results_dir_name / self.elder_runner.results_sub_dir
             
-            # Create directories if they don't exist
             self.tmp_dir.mkdir(parents=True, exist_ok=True)
             dest_dir.mkdir(parents=True, exist_ok=True)
             
-            # Generate PhEval result
             generate_pheval_result(
                 pheval_result=self.results,
                 sort_order_str="ASCENDING",  # Ascending for weighted average, descending for TPC
@@ -115,29 +103,30 @@ class DisWgtAvgEmbRunner(BaseElderRunner):
                 tool_result_path=Path(output_file_name),
             )
             
-            # Move result files to the destination directory
             for file in self.tmp_dir.iterdir():
-                print(f"Moving file {file} to {dest_dir / file.name}")
+                # print(f"Moving file {file} to {dest_dir / file.name}")
                 if file.is_file():
                     shutil.move(file, dest_dir / file.name)
         else:
-            print("No results to process")
-
+            pass # logging
+            # print("No results to process")
 
 if __name__ == "__main__":
-    # Set up multiprocessing
     mp.set_start_method('fork', force=True)
-    
-    # Create and run runner from configuration
+    config_path = load_config_path()
+    repo_root = Path(__file__).parent.parents[1]
+
     runner = DisWgtAvgEmbRunner.from_config(
-        runner_type=RunnerType.WEIGHTED_AVERAGE.value,
-        model_type="ada",
-        nr_of_phenopackets="5084",
-        nr_of_results=10,
-        collection_name="ada002_lrd_hpo_embeddings",
-        db_collection_path="/Users/ck/Monarch/elder/emb_data/models/ada002",
+        config_path=config_path,
+        config_overrides={
+            "runner_type" : RunnerType.WEIGHTED_AVERAGE.value,
+            "model_type":"ada",
+            "nr_of_phenopackets":"10",
+            "nr_of_results": 10,
+            "collection_name":"ada002_lrd_hpo_embeddings",
+            "db_collection_path": f"{str(repo_root)}/emb_data/models/ada002",
+        }
     )
-    
-    # Run analysis
+
     runner.prepare()
     runner.run()

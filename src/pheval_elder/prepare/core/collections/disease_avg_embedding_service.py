@@ -8,6 +8,7 @@ from chromadb.types import Collection
 
 from tqdm import tqdm
 
+from pheval_elder.prepare.config.unified_config import get_config
 from pheval_elder.prepare.core.collections.base_service import BaseService
 from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 from pheval_elder.prepare.core.utils.utils import populate_venomx
@@ -31,7 +32,8 @@ class DiseaseAvgEmbeddingService(BaseService):
         batch_size = 500
         num_diseases = len(self.disease_to_hps)
         # TODO -> embedding model dict from read in config parser
-        batch_embeddings = np.zeros((batch_size, 1536)) #3072 for large model
+        # model_dimension = get_config() # just drop dimension in config and carry here
+        batch_embeddings = np.zeros((batch_size, 3072)) #3072 for large model
         # Use dtype=object for flexibility with string lengths and special characters, avoiding truncation issues.
         batch_diseases = np.empty(batch_size, dtype=object)
         current_index = 0

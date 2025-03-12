@@ -115,9 +115,9 @@ def validate_runner_config(runner_config: RunnerConfig) -> None:
             "Custom model name is required when model type is 'custom'"
         )
     
-    # If model path is provided, check that it exists
-    if runner_config.model_path:
-        validate_path_exists(runner_config.model_path, "Model path")
+    # # If model path is provided, check that it exists
+    # if runner_config.db_path:
+    #     validate_path_exists(runner_config.model_path, "Model path")
 
 
 def validate_config(config: ElderConfig) -> List[str]:

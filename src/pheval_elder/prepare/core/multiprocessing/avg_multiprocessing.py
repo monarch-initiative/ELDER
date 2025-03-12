@@ -109,24 +109,19 @@ def process_avg_analysis_parallel(
     Returns:
         List of lists of PhEvalDiseaseResult objects, one list per phenotype set
     """
-    # Get the data needed for parallel processing
     processing_data = oadea_analyzer.get_parallel_processing_data()
 
-    # Determine the number of workers
     num_cores = mp.cpu_count()
     num_workers = min(num_cores, len(phenotype_sets))
     
-    # Distribute the phenotype sets evenly among the workers
     distributed_sets = distribute_sets_evenly(phenotype_sets, num_workers)
 
-    # Create the arguments for each worker
     process_args = [
             (worker_sets, nr_of_results, processing_data)
             for worker_sets in distributed_sets
             if worker_sets
         ]
 
-    # Process the phenotype sets in parallel
     with mp.Pool(num_cores) as pool:
         batch_results = list(tqdm(
             pool.imap(process_avg_tasks, process_args),
@@ -139,7 +134,6 @@ def process_avg_analysis_parallel(
     print(f"\n----------\nFinished processing {len(phenotype_sets)} phenotype sets in parallel\n----------\n")
     gc.collect()
     
-    # Collect the results
     final_results = [[] for _ in range(len(phenotype_sets))]
     for worker_results in batch_results:
         for orig_idx, result_list in worker_results:
