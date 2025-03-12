@@ -1,9 +1,4 @@
-import json
-from typing import Dict
-
 import numpy as np
-from chromadb.types import Collection
-
 
 from pheval_elder.prepare.core.data_processing.OMIMHPOExtractor import OMIMHPOExtractor
 from pheval_elder.prepare.core.data_processing.graph_data_extractor import GraphEmbeddingExtractor

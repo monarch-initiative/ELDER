@@ -30,7 +30,7 @@ class DiseaseWeightedAvgEmbeddingService(BaseService):
         batch_size = 100
         num_diseases = len(self.disease_to_hps_with_frequencies_dp)
 
-        all_embeddings = np.zeros((batch_size, 1536))
+        all_embeddings = np.zeros((batch_size, 3072))
         all_diseases = np.empty(batch_size, dtype=object)
 
         current_index = 0

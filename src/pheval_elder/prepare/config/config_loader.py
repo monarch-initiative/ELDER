@@ -9,6 +9,11 @@ def load_config():
         config = yaml.safe_load(file)
     return config
 
+def load_config_path():
+    project_root = Path(__file__).resolve().parents[4]
+    config_path = os.path.join(project_root, 'elder_config.yaml')
+    return config_path
+
 def main():
     load_config()
 

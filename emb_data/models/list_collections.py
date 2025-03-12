@@ -9,6 +9,6 @@ def list_collections(db_path):
         print(c.name)
 
 if __name__ == "__main__":
-    model = "nomic"
+    model = "mxbai-l"
     db_path = f"/Users/ck/Monarch/elder/emb_data/models/{model}"
     list_collections(db_path)

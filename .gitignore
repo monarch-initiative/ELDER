@@ -1,1 +1,66 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
 .env
+
+# IDE files
+.idea
+.idea/**
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# Project specific directories to ignore
+stats
+stats_ressources
+/output/
+/emb_data/
+/5084_phenopackets/
+/5085_phenopackets/
+/5213_phenopackets/
+/10_z_phenopackets/
+/LIRICAL_phenopackets/
+/OMIM_*_pp/
+/exomiser_results/
+src/pheval_elder/main
+src/pheval_elder/main/**
+
+# Data files
+*.json
+*.parquet
+*.duckdb
+*.csv
+*.db
+*.svg
