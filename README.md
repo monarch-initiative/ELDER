@@ -14,7 +14,7 @@ ELDER provides several strategies for analyzing phenotype terms:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/elder.git
+git clone https://github.com/monarch-initiative/ELDER.git
 cd elder
 
 # Create a virtual environment
@@ -69,8 +69,6 @@ You can create a configuration file in several ways:
 3. **Create from scratch**:
    Create a new file named `elder_config.yaml` and add the necessary settings.
 
-For more details, see the [Configuration Documentation](docs/configuration.md).
-
 ## Usage
 
 ### Command Line Interface
@@ -118,7 +116,9 @@ from pheval_elder.prepare.config.unified_config import RunnerType
 # Create and run a runner with configuration
 runner = DiseaseAvgEmbRunner.from_config(
     config_path="elder_config.yaml",
-    runner_type=RunnerType.AVERAGE.value,
+    config_overrides={
+                "runner_type": RunnerType.AVERAGE.value,
+            }
 )
 
 # Run analysis
@@ -154,5 +154,3 @@ python examples/run_with_config.py --config examples/configs/average_config.yaml
 ```
 
 ## License
-
-[Your License]
