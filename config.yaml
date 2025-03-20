@@ -7,3 +7,25 @@ tool_specific_configuration_options:
   chroma_db_path: "/Users/carlo/chromadb/large"
   385_phenopackets: "/Users/carlo/ELDER_OFFICIAL/ELDER/385_phenopackets"
 #"/Users/carlo/chromadb/ada-002-hp"
+
+openai:
+  api_key: os.environ/CBORG_API_KEY
+  files_config:
+    storage_path: "/tmp/cborg_storage"  # Ensure this directory exists
+    max_file_size: 10485760              # For example, 10 MB in bytes
+
+model_list:
+  - model_name: openai/gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_base: "https://api.cborg.lbl.gov"
+      api_key: os.environ/CBORG_API_KEY
+      rpm: 6
+
+litellm_settings:
+  drop_params: True
+  success_callback: ["langfuse"]
+
+general_settings:
+  master_key: sk-1234
+  database_url: "postgresql://llmproxy:dbpassword9090@localhost:5432/litellm"
