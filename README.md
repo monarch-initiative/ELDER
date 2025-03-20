@@ -102,6 +102,7 @@ Available commands:
 - `weighted`: Run analysis with weighted average embedding strategy
 - `bestmatch`: Run analysis with best match (term-set pairwise comparison) strategy
 - `generate-config`: Generate a configuration file from a template
+- `curate-index`: Index ontologies, search, and manage collections using CurateGPT integration
 
 Run `elder --help` for more information about the available commands and options.
 
@@ -141,8 +142,48 @@ ELDER requires the following data:
 
 - **Phenopackets**: JSON files containing phenotype terms
 - **ChromaDB Collections**: Vector database collections with embeddings
+- **exomiser-results**: TSV files containing the exomiser results when run in phenotype only. Only needed for Pheval Benchmark.
 
 The paths to these data sources can be specified in the configuration file.
+
+### Creating Your Own Embeddings
+EDIT: This is currently setup to work only with the CBORG AI Portal
+If you prefer to create your own embeddings rather than using pre-built ones, you can use the `curate-index` command which provides direct integration with CurateGPT:
+
+```bash
+# Index HP ontology with standard descriptions
+curate-index index-ontology --db-path ./my_db --collection hp_standard
+
+# Index with enhanced descriptions (requires OpenAI API key)
+curate-index index-ontology --enhanced-descriptions --collection hp_enhanced
+
+# Include aliases in the indexed fields
+curate-index index-ontology --index-fields "label,definition,relationships,aliases"
+
+# Use different model shorthand names
+curate-index index-ontology --model ada002  # OpenAI's text-embedding-ada-002
+curate-index index-ontology --model large3  # OpenAI's text-embedding-3-large
+curate-index index-ontology --model bge-m3  # BAAI/bge-m3
+
+# Search in indexed collections
+curate-index search "cardiac arrhythmia"
+
+# View collection information
+curate-index info
+```
+
+The Human Phenotype Ontology (HP) works best with ELDER's existing analysis tools, as that's what the phenopackets reference.
+
+#### Enhanced Descriptions for Better Quality
+
+For the best quality embeddings, especially for rare phenotypes, the enhanced descriptions option uses OpenAI's o1 model to generate:
+
+- Detailed clinical information about etiology and associated conditions
+- Anatomical structures and physiological processes involved
+- Presentation across different severities and contexts
+- Distinguishing features from similar phenotypes
+
+This results in embeddings that better capture the semantic meaning and clinical context of each term.
 
 ## Development
 
