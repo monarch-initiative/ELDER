@@ -1,0 +1,26 @@
+rank,subject,subject_label,object,object_label,resnik,cosine
+1,HP:0410311,Hyposegmentation of neutrophil nuclei in CSF,HP:0011447,Hyposegmentation of neutrophil nuclei,0.7802336900383903,0.9107068792059595
+2,HP:0011447,Hyposegmentation of neutrophil nuclei,HP:0410311,Hyposegmentation of neutrophil nuclei in CSF,0.7802336900383903,0.9107068792059595
+3,HP:0031785,Abnormal eyelid movement,HP:0000496,Abnormality of eye movement,0.7802336900383903,0.8993978627548955
+4,HP:0000496,Abnormality of eye movement,HP:0031785,Abnormal eyelid movement,0.7802336900383903,0.8993978627548955
+5,HP:0410312,Hypersegmentation of neutrophil nuclei in CSF,HP:0004821,Hypersegmentation of neutrophil nuclei,0.7802336900383903,0.8988483373747664
+6,HP:0004821,Hypersegmentation of neutrophil nuclei,HP:0410312,Hypersegmentation of neutrophil nuclei in CSF,0.7802336900383903,0.8988483373747664
+7,HP:0410212,Hyperoxemia in cord blood,HP:0012419,Hyperoxemia,0.7802336900383903,0.8937368144735568
+8,HP:0012419,Hyperoxemia,HP:0410212,Hyperoxemia in cord blood,0.7802336900383903,0.8937368144735568
+9,HP:0002395,Lower limb hyperreflexia,HP:0006895,Lower limb hypertonia,0.7802336900383903,0.8898712861111168
+10,HP:0006895,Lower limb hypertonia,HP:0002395,Lower limb hyperreflexia,0.7802336900383903,0.8898712861111168
+11,HP:0410214,Hypercapnia in cord blood,HP:0012416,Hypercapnia,0.7802336900383903,0.8824979437942733
+12,HP:0012416,Hypercapnia,HP:0410214,Hypercapnia in cord blood,0.7802336900383903,0.8824979437942733
+13,HP:0410215,Hypocapnia in cord blood,HP:0012417,Hypocapnia,0.7802336900383903,0.8820342276831504
+14,HP:0012417,Hypocapnia,HP:0410215,Hypocapnia in cord blood,0.7802336900383903,0.8820342276831504
+15,HP:0005369,Decreased circulating complement factor H concentration,HP:0033299,Reduced circulating complement factor H related protein 1 concentration,0.7802336900383903,0.8786743915316243
+16,HP:0033299,Reduced circulating complement factor H related protein 1 concentration,HP:0005369,Decreased circulating complement factor H concentration,0.7802336900383903,0.8786743915316243
+17,HP:0031476,Abnormal buccal mucosa cell morphology,HP:3000019,Abnormal buccal mucosa morphology,0.7802336900383903,0.8783417963133748
+18,HP:3000019,Abnormal buccal mucosa morphology,HP:0031476,Abnormal buccal mucosa cell morphology,0.7802336900383903,0.8783417963133748
+19,HP:0040255,Aplasia/Hypoplasia of the clitoris,HP:0006709,Aplasia/Hypoplasia of the nipples,0.7802336900383903,0.878020928905338
+20,HP:0006709,Aplasia/Hypoplasia of the nipples,HP:0040255,Aplasia/Hypoplasia of the clitoris,0.7802336900383903,0.878020928905338
+21,HP:0033014,Decreased salivary cortisol level,HP:0008163,Decreased circulating cortisol level,0.7802336900383903,0.8776024198520753
+22,HP:0008163,Decreased circulating cortisol level,HP:0033014,Decreased salivary cortisol level,0.7802336900383903,0.8776024198520753
+23,HP:0008058,Aplasia/Hypoplasia of the optic nerve,HP:0011000,Aplasia/Hypoplasia of the optic tract,0.7802336900383903,0.8761158734099638
+24,HP:0011000,Aplasia/Hypoplasia of the optic tract,HP:0008058,Aplasia/Hypoplasia of the optic nerve,0.7802336900383903,0.8761158734099638
+25,HP:0034621,Hepatic xanthomatosis,HP:0034622,Adrenal xanthomatosis,0.7802336900383903,0.8752863302748156

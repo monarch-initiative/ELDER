@@ -1,0 +1,51 @@
+rank,subject,subject_label,object,object_label,resnik,cosine,comparison_type
+1,HP:0032505,Hydrophobia,HP:0004799,Jejunoileal diverticula,6.503688684365201,0.12700810242939925,high_resnik_low_cosine
+2,HP:0004799,Jejunoileal diverticula,HP:0032505,Hydrophobia,6.503688684365201,0.12700810242939925,high_resnik_low_cosine
+3,HP:0030411,Jejunal adenocarcinoma,HP:0032505,Hydrophobia,6.503688684365201,0.16628203731453595,high_resnik_low_cosine
+4,HP:0032505,Hydrophobia,HP:0030411,Jejunal adenocarcinoma,6.503688684365201,0.16628203731453595,high_resnik_low_cosine
+5,HP:0008315,Decreased plasma free carnitine,HP:0031926,Homer Wright rosette,6.6751691523095555,0.16758956540383446,high_resnik_low_cosine
+6,HP:0031926,Homer Wright rosette,HP:0008315,Decreased plasma free carnitine,6.6751691523095555,0.16758956540383446,high_resnik_low_cosine
+7,HP:0032505,Hydrophobia,HP:0002245,Meckel diverticulum,6.503688684365201,0.17273166510249632,high_resnik_low_cosine
+8,HP:0002245,Meckel diverticulum,HP:0032505,Hydrophobia,6.503688684365201,0.17273166510249632,high_resnik_low_cosine
+9,HP:0006719,Benign gastrointestinal tract tumors,HP:0032505,Hydrophobia,6.503688684365201,0.1796627646145802,high_resnik_low_cosine
+10,HP:0032505,Hydrophobia,HP:0006719,Benign gastrointestinal tract tumors,6.503688684365201,0.1796627646145802,high_resnik_low_cosine
+11,HP:0006380,Knee flexion contracture,HP:0033776,Enamel pearls,7.063989130852089,0.18327542374090927,high_resnik_low_cosine
+12,HP:0033776,Enamel pearls,HP:0006380,Knee flexion contracture,7.063989130852089,0.18327542374090927,high_resnik_low_cosine
+13,HP:0012318,Occipital neuralgia,HP:0032142,Fetor hepaticus,7.85916933896359,0.18417086346349243,high_resnik_low_cosine
+14,HP:0032142,Fetor hepaticus,HP:0012318,Occipital neuralgia,7.85916933896359,0.18417086346349243,high_resnik_low_cosine
+15,HP:0032505,Hydrophobia,HP:0031369,Colon perforation,6.503688684365201,0.1845639889619821,high_resnik_low_cosine
+16,HP:0031369,Colon perforation,HP:0032505,Hydrophobia,6.503688684365201,0.1845639889619821,high_resnik_low_cosine
+17,HP:0007024,Pseudobulbar paralysis,HP:0012028,Hepatocellular adenoma,6.503688684365201,0.18684219342774755,high_resnik_low_cosine
+18,HP:0012028,Hepatocellular adenoma,HP:0007024,Pseudobulbar paralysis,6.503688684365201,0.18684219342774755,high_resnik_low_cosine
+19,HP:0008315,Decreased plasma free carnitine,HP:0031928,True ependymal rosette,6.6751691523095555,0.18777814726194686,high_resnik_low_cosine
+20,HP:0031928,True ependymal rosette,HP:0008315,Decreased plasma free carnitine,6.6751691523095555,0.18777814726194686,high_resnik_low_cosine
+21,HP:0004800,Duodenal diverticula,HP:0032505,Hydrophobia,6.503688684365201,0.1901716062137047,high_resnik_low_cosine
+22,HP:0032505,Hydrophobia,HP:0004800,Duodenal diverticula,6.503688684365201,0.1901716062137047,high_resnik_low_cosine
+23,HP:0005165,Shortened PR interval,HP:0011695,Cerebellar hemorrhage,6.239273048133048,0.19062846080267423,high_resnik_low_cosine
+24,HP:0011695,Cerebellar hemorrhage,HP:0005165,Shortened PR interval,6.239273048133048,0.19062846080267423,high_resnik_low_cosine
+25,HP:0006723,Intestinal carcinoid,HP:0032505,Hydrophobia,6.503688684365201,0.19090248491844541,high_resnik_low_cosine
+1,HP:0034510,Abnormal muscle tissue enzyme activity or level,HP:0034526,Abnormal enzyme activity in muscle tissue,0.7802336900383903,0.9499381961299229,low_resnik_high_cosine
+2,HP:0034526,Abnormal enzyme activity in muscle tissue,HP:0034510,Abnormal muscle tissue enzyme activity or level,0.7802336900383903,0.9499381961299229,low_resnik_high_cosine
+3,HP:0004467,Preauricular pit,HP:0030025,Auricular pit,0.7802336900383903,0.9424186041974442,low_resnik_high_cosine
+4,HP:0030025,Auricular pit,HP:0004467,Preauricular pit,0.7802336900383903,0.9424186041974442,low_resnik_high_cosine
+5,HP:0003472,Hypocalcemic tetany,HP:0001281,Tetany,0.7802336900383903,0.9176222912514153,low_resnik_high_cosine
+6,HP:0001281,Tetany,HP:0003472,Hypocalcemic tetany,0.7802336900383903,0.9176222912514153,low_resnik_high_cosine
+7,HP:0031749,Abnormal lateral rectus muscle physiology,HP:3000069,Abnormality of lateral rectus extra-ocular muscle,0.7802336900383903,0.9129393723883594,low_resnik_high_cosine
+8,HP:3000069,Abnormality of lateral rectus extra-ocular muscle,HP:0031749,Abnormal lateral rectus muscle physiology,0.7802336900383903,0.9129393723883594,low_resnik_high_cosine
+9,HP:0011426,Fetal choroid plexus cysts,HP:0002190,Choroid plexus cyst,0.7802336900383903,0.9110730647765083,low_resnik_high_cosine
+10,HP:0002190,Choroid plexus cyst,HP:0011426,Fetal choroid plexus cysts,0.7802336900383903,0.9110730647765083,low_resnik_high_cosine
+11,HP:0005346,Abnormal facial expression,HP:4000089,Abnormal quality of facial expression,0.7802336900383903,0.9098537203952535,low_resnik_high_cosine
+12,HP:4000089,Abnormal quality of facial expression,HP:0005346,Abnormal facial expression,0.7802336900383903,0.9098537203952535,low_resnik_high_cosine
+13,HP:3000058,Abnormality of inferior rectus extraocular muscle,HP:0025600,Abnormal inferior rectus muscle physiology,0.7802336900383903,0.9068887122460167,low_resnik_high_cosine
+14,HP:0025600,Abnormal inferior rectus muscle physiology,HP:3000058,Abnormality of inferior rectus extraocular muscle,0.7802336900383903,0.9068887122460167,low_resnik_high_cosine
+15,HP:0011391,Abnormal inner ear nerve morphology,HP:0009591,Abnorma vestibulocochlear nerve morphology,0.7802336900383903,0.905508209040274,low_resnik_high_cosine
+16,HP:0009591,Abnorma vestibulocochlear nerve morphology,HP:0011391,Abnormal inner ear nerve morphology,0.7802336900383903,0.905508209040274,low_resnik_high_cosine
+17,HP:0004464,Postauricular pit,HP:0030025,Auricular pit,0.7802336900383903,0.9029052777330752,low_resnik_high_cosine
+18,HP:0030025,Auricular pit,HP:0004464,Postauricular pit,0.7802336900383903,0.9029052777330752,low_resnik_high_cosine
+19,HP:0002011,Morphological central nervous system abnormality,HP:0034206,Abnormal fetal central nervous system morphology,0.7802336900383903,0.9012663803617083,low_resnik_high_cosine
+20,HP:0034206,Abnormal fetal central nervous system morphology,HP:0002011,Morphological central nervous system abnormality,0.7802336900383903,0.9012663803617083,low_resnik_high_cosine
+21,HP:0011432,Elevated maternal circulating alpha-fetoprotein concentration,HP:0006254,Elevated circulating alpha-fetoprotein concentration,0.7303410244568754,0.9003908973889986,low_resnik_high_cosine
+22,HP:0006254,Elevated circulating alpha-fetoprotein concentration,HP:0011432,Elevated maternal circulating alpha-fetoprotein concentration,0.7303410244568754,0.9003908973889986,low_resnik_high_cosine
+23,HP:0034192,Pulmonary thromboembolism,HP:0002204,Pulmonary embolism,0.7802336900383903,0.8974097866655548,low_resnik_high_cosine
+24,HP:0002204,Pulmonary embolism,HP:0034192,Pulmonary thromboembolism,0.7802336900383903,0.8974097866655548,low_resnik_high_cosine
+25,HP:0000465,Webbed neck,HP:0009759,Neck pterygia,0.7802336900383903,0.8973450512766739,low_resnik_high_cosine
