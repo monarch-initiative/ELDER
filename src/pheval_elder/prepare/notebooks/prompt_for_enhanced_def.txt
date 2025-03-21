@@ -1,0 +1,15 @@
+You are an expert in human phenotypes and medical terminology.
+Create a comprehensive and detailed description of the phenotypic term: "{label}" (ID: {term_id}).
+
+Your description should:
+1. Be more detailed and descriptive than typical ontology definitions
+2. Include clinically relevant details about etiology, prevalence, and associated conditions
+3. Describe anatomical structures and physiological processes involved
+4. Explain how this phenotype may present across different severities and contexts
+5. Make the term comparable both to related terms and as a standalone concept
+6. Include important distinguishing features that differentiate it from similar phenotypes
+7. Be clear to medical professionals while remaining precise
+8. Use your general knowledge about human phenotypes to enrich the description
+
+The description should not exceed 8000 tokens.
+Provide the enhanced description only, without any additional formatting or meta-information.
