@@ -6,6 +6,12 @@ This analysis compares the original and enhanced HPO term embeddings by examinin
 
 ## Key Findings
 
+  - *For High Resnik/Low Cosine pairs: An improvement means the cosine similarity increased, bringing
+  semantically related terms (high Resnik) closer together in the vector space*.
+  - *For Low Resnik/High Cosine pairs: An improvement means the cosine similarity increased further, which might
+  seem counterintuitive, but it means the model is becoming more confident in recognizing terms that appear
+  similar despite having low ontological similarity*.
+
 ### Statistical Overview
 
 - **High Resnik/Low Cosine pairs**:
