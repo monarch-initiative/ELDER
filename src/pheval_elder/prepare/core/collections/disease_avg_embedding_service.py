@@ -31,7 +31,6 @@ class DiseaseAvgEmbeddingService(BaseService):
 
         batch_size = 500
         num_diseases = len(self.disease_to_hps)
-        # TODO -> embedding model dict from read in config parser
         model_dimension = get_config().runner.model_dimension # just drop dimension in config and carry here
         batch_embeddings = np.zeros((batch_size, model_dimension)) #3072 for large model
         # Use dtype=object for flexibility with string lengths and special characters, avoiding truncation issues.

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 import numpy as np
 from chromadb.types import Collection
 from tqdm import tqdm
-
+from pheval_elder.prepare.config.unified_config import get_config
 from pheval_elder.prepare.core.collections.base_service import BaseService
 from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 
@@ -29,8 +29,8 @@ class DiseaseWeightedAvgEmbeddingService(BaseService):
 
         batch_size = 100
         num_diseases = len(self.disease_to_hps_with_frequencies_dp)
-
-        all_embeddings = np.zeros((batch_size, 3072))
+        model_dimension = get_config().runner.model_dimension  # just drop dimension in config and carry here
+        all_embeddings = np.zeros((batch_size, model_dimension))
         all_diseases = np.empty(batch_size, dtype=object)
 
         current_index = 0
