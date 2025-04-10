@@ -146,6 +146,14 @@ ELDER requires the following data:
 
 The paths to these data sources can be specified in the configuration file.
 
+### Fetching Existing Embeddings
+Pre-built embeddings are available on [HuggingFace](https://huggingface.co/iQuxLE) for the following collections
+```bash
+
+    embeddings download -p /path/to/chroma-dir/ --repo-id iQuxLE/large3_lrd_hpo_embedding --collection lrd_hpo_embeddings --embeddings-filename embeddings.parquet --metadata-filename metadata.yaml
+
+```
+
 ### Creating Your Own Embeddings
 EDIT: This is currently setup to work only with the CBORG AI Portal
 If you prefer to create your own embeddings rather than using pre-built ones, you can use the `curate-index` command which provides direct integration with CurateGPT:

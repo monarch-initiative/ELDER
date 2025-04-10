@@ -50,9 +50,11 @@ class RunnerConfig:
     runner_type: RunnerType
     model_type: ModelType
     nr_of_phenopackets: str
-    nr_of_results: int = 10
+    model_dimension: int
     custom_model_name: Optional[str] = None
     model_path: Optional[str] = None
+    nr_of_results: int = 10
+
 
 
 @dataclass
@@ -132,7 +134,8 @@ class ConfigLoader:
             nr_of_phenopackets=str(runner_config.get('nr_of_phenopackets', "385")),
             nr_of_results=int(runner_config.get('nr_of_results', 10)),
             custom_model_name=runner_config.get('custom_model_name'),
-            model_path=runner_config.get('model_path')
+            model_path=runner_config.get('model_path'),
+            model_dimension=runner_config.get('model_dimension', 3702)
         )
 
     @classmethod
