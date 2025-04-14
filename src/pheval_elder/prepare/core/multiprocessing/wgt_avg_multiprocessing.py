@@ -8,12 +8,10 @@ using the weighted average embedding strategy.
 import gc
 from typing import List, Tuple, Any
 import multiprocessing as mp
-
 import numpy as np
 from pheval.post_processing.post_processing import PhEvalDiseaseResult
 from tqdm import tqdm
-
-import pheval_elder.prepare.core.collections.globals as g
+import chromadb
 from pheval_elder.prepare.core.data_processing.data_processor import DataProcessor
 from pheval_elder.prepare.core.query.optimized_parallel_best_match import distribute_sets_evenly
 
@@ -62,7 +60,7 @@ def sort_and_create_pheval_disease_results(query) -> List[PhEvalDiseaseResult]:
     ]
 
 
-def query_disease_weighted_avg_collection(pheno_set, hp_embeddings, n_results):
+def query_disease_weighted_avg_collection(pheno_set, hp_embeddings, n_results, collection):
     """Query the disease weighted average collection for a phenotype set."""
     avg_embedding = calculate_average_embedding(pheno_set, hp_embeddings)
     if avg_embedding is None:
@@ -74,20 +72,23 @@ def query_disease_weighted_avg_collection(pheno_set, hp_embeddings, n_results):
         "n_results": n_results
     }
 
-    query_results = g.global_wgt_avg_disease_embd_collection.query(**query_params)
+    query_results = collection.query(**query_params)
     return sort_and_create_pheval_disease_results(query=query_results)
 
 
 def process_wgt_tasks(args) -> List[Tuple[Any, List[PhEvalDiseaseResult]]]:
     """Process a batch of phenotype sets for weighted average embedding analysis."""
-    batch, nr_of_results, processing_data = args
+    batch, nr_of_results, processing_data, db_path, collection_name = args
     hp_embeddings = processing_data
     results = []
+    client = chromadb.PersistentClient(path=db_path)
+    collection = client.get_collection(collection_name)
     for orig_idx, phenotype_set in batch:
         result = query_disease_weighted_avg_collection(
             pheno_set=phenotype_set,
             hp_embeddings=hp_embeddings,
             n_results=nr_of_results,
+            collection=collection
         )
         results.append((orig_idx, result))
     return results
@@ -116,8 +117,10 @@ def process_wgt_avg_analysis_parallel(
     
     distributed_sets = distribute_sets_evenly(phenotype_sets, num_workers)
 
+    db_path = owadea_analyzer.data_processor.db_manager.path
+    collection_name = owadea_analyzer.data_processor.db_manager.disease_weighted_avg_embeddings_collection.name
     process_args = [
-            (worker_sets, nr_of_results, processing_data)
+            (worker_sets, nr_of_results, processing_data, db_path, collection_name)
             for worker_sets in distributed_sets
             if worker_sets
         ]

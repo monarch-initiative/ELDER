@@ -25,6 +25,24 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 poetry install
 ```
 
+## Data Requirements
+
+ELDER requires the following data:
+
+- **Phenopackets**: JSON files containing phenotype terms
+- **ChromaDB Collections**: Vector database collections with embeddings
+- **exomiser-results**: TSV files containing the exomiser results when run in phenotype only. Only needed for Pheval Benchmark.
+
+The paths to these data sources can be specified in the configuration file.
+
+### Fetching Existing Embeddings
+Pre-built embeddings are available on [HuggingFace](https://huggingface.co/iQuxLE) for the following collections
+```bash
+
+    embeddings download -p /path/to/chromadb/ --repo-id iQuxLE/large3_lrd_hpo_embedding --collection lrd_hpo_embeddings --embeddings-filename embeddings.parquet --metadata-filename metadata.yaml
+
+```
+
 ## Configuration
 
 ELDER uses a YAML configuration file for settings. By default, it looks for `elder_config.yaml` in the current directory.
@@ -34,7 +52,7 @@ Example configuration:
 ```yaml
 # Database settings
 database:
-  chroma_db_path: "/path/to/chromadb/directory"
+  chroma_db_path: "/path/to/chromadb/"
   collection_name: "lrd_hpo_embeddings"
   similarity_measure: "COSINE"
 
@@ -89,11 +107,11 @@ elder bestmatch --model mxbai --phenopackets 5084 --results 10 --collection mxba
 If you have a configuration file, you can use it like this:
 
 ```bash
-# Use a configuration file
-elder average --config path/to/elder_config.yaml
+# Use the default configuration file elder_config.yaml
+elder average
 
 # Override configuration values
-elder average --config path/to/elder_config.yaml --model ada --results 20
+elder --config path/to/custom_elder_config.yaml average  --model ada --results 20
 ```
 
 Available commands:
@@ -136,17 +154,7 @@ The `examples` directory contains sample scripts for running ELDER:
 python examples/run_with_config.py --config examples/configs/average_config.yaml --strategy avg
 ```
 
-## Data Requirements
-
-ELDER requires the following data:
-
-- **Phenopackets**: JSON files containing phenotype terms
-- **ChromaDB Collections**: Vector database collections with embeddings
-- **exomiser-results**: TSV files containing the exomiser results when run in phenotype only. Only needed for Pheval Benchmark.
-
-The paths to these data sources can be specified in the configuration file.
-
-### Creating Your Own Embeddings
+## Creating Your Own Embeddings
 EDIT: This is currently setup to work only with the CBORG AI Portal
 If you prefer to create your own embeddings rather than using pre-built ones, you can use the `curate-index` command which provides direct integration with CurateGPT:
 
