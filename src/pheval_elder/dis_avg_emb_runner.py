@@ -5,22 +5,19 @@ This module provides a runner for analyzing phenotype sets using
 the average embeddings strategy.
 """
 
-import shutil
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import List, Any, Optional, Union
-
 import multiprocessing as mp
-from pheval.post_processing.post_processing import PhEvalDiseaseResult, generate_pheval_result
+import shutil
+from dataclasses import dataclass
+from pathlib import Path
+
+from pheval.post_processing.post_processing import generate_pheval_result
 from pheval.utils.file_utils import all_files
 from pheval.utils.phenopacket_utils import PhenopacketUtil, phenopacket_reader
-from tqdm import tqdm
-
-import pheval_elder.prepare.core.collections.globals as g
 from pheval_elder.base_runner import BaseElderRunner
 from pheval_elder.prepare.config.config_loader import load_config_path
 from pheval_elder.prepare.config.unified_config import RunnerType
 from pheval_elder.prepare.core.utils.obsolete_hp_mapping import update_hpo_id
+from tqdm import tqdm
 
 
 @dataclass
@@ -63,9 +60,6 @@ class DiseaseAvgEmbRunner(BaseElderRunner):
             file_names.append(file_path.name)
             phenotype_sets.append(observed_phenotypes_hpo_ids)
 
-        # Initialize the global collection for multiprocessing
-        g.global_avg_disease_emb_collection = self.elder_runner.disease_service.disease_new_avg_embeddings_collection
-        
         if self.elder_runner is not None and self.elder_runner.strategy == "avg":
             self.results = self.elder_runner.optimized_avg_analysis(phenotype_sets, self.config.runner.nr_of_results)
             for file_name, result_set in zip(file_names, self.results):
