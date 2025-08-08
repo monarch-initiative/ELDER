@@ -15,13 +15,9 @@ ELDER provides several strategies for analyzing phenotype terms:
 ```bash
 # Clone the repository
 git clone https://github.com/monarch-initiative/ELDER.git
-cd elder
+cd ELDER
 
-# Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+# Install dependencies (Poetry will create and manage the virtual environment)
 poetry install
 ```
 
