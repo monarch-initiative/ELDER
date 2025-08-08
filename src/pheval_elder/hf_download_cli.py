@@ -123,24 +123,48 @@ def download_embeddings(path, collection, repo_id, embeddings_filename, metadata
     agent = HuggingFaceAgent()
 
     try:
-        if embeddings_filename:
-            embedding_filename = repo_id + "/" + embeddings_filename
-            parquet_download = agent.cached_download(repo_id=repo_id,
-                                     repo_type="dataset",
-                                     filename=embedding_filename
-                                     )
-        if metadata_filename:
-            metadata_filename = repo_id + "/" + metadata_filename
-            metadata_download = agent.api.hf_hub_download(repo_id=repo_id,
-                                               repo_type="dataset",
-                                               filename=metadata_filename
-            )
+        # Auto-discover file paths if specific filenames are provided
+        if embeddings_filename == "embeddings.parquet" and metadata_filename == "metadata.yaml":
+            click.echo("Auto-discovering file structure in repository...")
+            found_files = agent.find_files_in_repo(repo_id=repo_id, repo_type="dataset")
+            
+            if found_files["embeddings"]:
+                click.echo(f"Found embeddings file: {found_files['embeddings']}")
+                parquet_download = agent.cached_download(repo_id=repo_id,
+                                         repo_type="dataset",
+                                         filename=found_files["embeddings"]
+                                         )
+            else:
+                click.echo("No embeddings.parquet file found in repository")
+                return
+                
+            if found_files["metadata"]:
+                click.echo(f"Found metadata file: {found_files['metadata']}")
+                metadata_download = agent.api.hf_hub_download(repo_id=repo_id,
+                                                   repo_type="dataset",
+                                                   filename=found_files["metadata"]
+                )
+            else:
+                click.echo("No metadata.yaml file found in repository")
+        else:
+            # Use specific filenames provided by user
+            if embeddings_filename:
+                parquet_download = agent.cached_download(repo_id=repo_id,
+                                         repo_type="dataset",
+                                         filename=embeddings_filename
+                                         )
+            if metadata_filename:
+                metadata_download = agent.api.hf_hub_download(repo_id=repo_id,
+                                                   repo_type="dataset",
+                                                   filename=metadata_filename
+                )
 
     except Exception as e:
         click.echo(f"Error meanwhile downloading: {e}")
+        return
 
     try:
-        if parquet_download.endswith(".parquet"):
+        if parquet_download and parquet_download.endswith(".parquet"):
             df = pd.read_parquet(Path(parquet_download))
             store_objects = [
                 {
@@ -150,7 +174,7 @@ def download_embeddings(path, collection, repo_id, embeddings_filename, metadata
                 } for _, row in df.iterrows()
             ]
 
-        if metadata_download.endswith(".yaml"):
+        if metadata_download and metadata_download.endswith(".yaml"):
             # populate venomx from file
             with open(metadata_download, "r") as infile:
                 _meta = yaml.safe_load(infile)

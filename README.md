@@ -36,11 +36,14 @@ ELDER requires the following data:
 The paths to these data sources can be specified in the configuration file.
 
 ### Fetching Existing Embeddings
-Pre-built embeddings are available on [HuggingFace](https://huggingface.co/iQuxLE) for the following collections
+Pre-built embeddings are available on [HuggingFace](https://huggingface.co/iQuxLE) for the following collections. Examples for ada-002 and small3 are given below:
+
 ```bash
+# Download ADA-002 embeddings
+embeddings download -p /path/to/chromadb/ --repo-id iQuxLE/ada-002_lrd_hpo_embedding --collection ada_hpo_embeddings --embeddings-filename embeddings.parquet --metadata-filename metadata.yaml
 
-    embeddings download -p /path/to/chromadb/ --repo-id iQuxLE/large3_lrd_hpo_embedding --collection lrd_hpo_embeddings --embeddings-filename embeddings.parquet --metadata-filename metadata.yaml
-
+# Download small3 embeddings
+embeddings download -p /path/to/chromadb/ --repo-id iQuxLE/small3_lrd_hpo_embedding --collection small3_hpo_embeddings --embeddings-filename embeddings.parquet --metadata-filename metadata.yaml
 ```
 
 ## Configuration

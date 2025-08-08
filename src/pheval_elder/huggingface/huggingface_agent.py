@@ -131,6 +131,29 @@ class HuggingFaceAgent:
             logger.error(f"Failed to upload files to {repo_id} on Hugging Face: {e}")
             raise
 
+    def find_files_in_repo(self, repo_id: str, repo_type: str = "dataset"):
+        """
+        Recursively search through a repository to find embeddings.parquet and metadata.yaml files.
+        
+        :param repo_id: The repository ID on Hugging Face.
+        :param repo_type: The type of repository (default: "dataset").
+        :return: Dictionary with file paths for embeddings and metadata.
+        """
+        try:
+            files = self.api.list_repo_files(repo_id=repo_id, repo_type=repo_type)
+            found_files = {"embeddings": None, "metadata": None}
+            
+            for file_path in files:
+                if file_path.endswith("embeddings.parquet"):
+                    found_files["embeddings"] = file_path
+                elif file_path.endswith("metadata.yaml"):
+                    found_files["metadata"] = file_path
+            
+            return found_files
+        except Exception as e:
+            logger.error(f"Error searching repository tree: {e}")
+            return {"embeddings": None, "metadata": None}
+
     def cached_download(
         self,
         repo_id: str,
