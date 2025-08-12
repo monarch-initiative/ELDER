@@ -124,7 +124,7 @@ if __name__ == "__main__":
         config_overrides={
             "runner_type": RunnerType.BEST_MATCH.value,
             "model_type": "ada",
-            "nr_of_phenopackets": "10",
+            "nr_of_phenopackets": "5084",
             "nr_of_results": 10,
             "collection_name": "ada002_lrd_hpo_embeddings",
             "db_collection_path": f"{str(repo_root)}/emb_data/models/ada002",

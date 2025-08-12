@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 """
 CLI for indexing ontologies using CurateGPT's functionality directly.
-
-This module provides command-line tools for using CurateGPT's enhanced
-description generation with OpenAI's o1 model to create richer HP term
-embeddings for ELDER's disease similarity searches.
 """
 
 import os
@@ -15,6 +11,9 @@ import time
 import click
 from pathlib import Path
 from typing import List, Optional
+
+from curategpt.store.batch_processor import BatchEnhancementProcessor
+from curategpt.store.direct_processor import CborgAsyncEnhancementProcessor
 
 from pheval_elder.prepare.core.graph.hpo_clustering import HPOClustering
 
@@ -242,11 +241,11 @@ def index_ontology(
 
         )
 
-        click.echo(f"✅ Successfully indexed {len(list(view.objects()))} terms in collection '{collection}'")
+        click.echo(f" Successfully indexed {len(list(view.objects()))} terms in collection '{collection}'")
         click.echo(f"You can now use this collection with ELDER's analysis commands.")
 
     except Exception as e:
-        click.echo(f"❌ Error indexing ontology: {str(e)}")
+        click.echo(f" Error indexing ontology: {str(e)}")
         import traceback
         click.echo(traceback.format_exc())
         sys.exit(1)
@@ -511,11 +510,11 @@ def index_with_batch(
         )
 
         end_time = time.time()
-        click.echo(f"✅ Successfully indexed collection '{collection}' in {end_time - start_time:.2f} seconds")
+        click.echo(f" Successfully indexed collection '{collection}' in {end_time - start_time:.2f} seconds")
         click.echo(f"You can now use this collection with ELDER's analysis commands.")
 
     except Exception as e:
-        click.echo(f"❌ Error indexing ontology: {str(e)}")
+        click.echo(f" Error indexing ontology: {str(e)}")
         import traceback
         click.echo(traceback.format_exc())
         sys.exit(1)
@@ -755,10 +754,10 @@ def restore_enhanced_descriptions(
 
         end_time = time.time()
         click.echo(
-            f"✅ Successfully restored and indexed collection '{collection}' in {end_time - start_time:.2f} seconds")
+            f" Successfully restored and indexed collection '{collection}' in {end_time - start_time:.2f} seconds")
 
     except Exception as e:
-        click.echo(f"❌ Error restoring enhanced descriptions: {str(e)}")
+        click.echo(f" Error restoring enhanced descriptions: {str(e)}")
         import traceback
         click.echo(traceback.format_exc())
         sys.exit(1)
@@ -888,7 +887,7 @@ def search(
             click.echo("")
 
     except Exception as e:
-        click.echo(f"❌ Error searching: {str(e)}")
+        click.echo(f"Error searching: {str(e)}")
         import traceback
         click.echo(traceback.format_exc())
         sys.exit(1)
@@ -971,7 +970,7 @@ def info(
                     click.echo(f"- {coll_name} (Error getting count: {e})")
         
     except Exception as e:
-        click.echo(f"❌ Error getting info: {str(e)}")
+        click.echo(f"Error getting info: {str(e)}")
         import traceback
         click.echo(traceback.format_exc())
         sys.exit(1)
