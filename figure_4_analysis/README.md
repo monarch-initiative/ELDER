@@ -2,7 +2,7 @@
 
 This directory contains the complete analysis for Figure 4, which examines how ELDER and ontology-only approaches perform across different phenotype complexity levels.
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 figure_4_analysis/
@@ -23,7 +23,7 @@ figure_4_analysis/
     └── figure_4_phenotype_complexity.png   # Main figure (PNG)
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -34,7 +34,7 @@ pip install matplotlib numpy duckdb jupyter
 
 ### Required Database Download
 
-**⚠️ Important:** You need to download the DuckDB database separately from Zenodo:
+**Important:** You need to download the DuckDB database separately from Zenodo:
 
 1. Download `Best_Match_Cosine_all_combined_Elder_vs_Exomiser.db` from: https://zenodo.org/records/16944913
 2. Place it in the `data/` directory
@@ -62,7 +62,7 @@ cd notebooks/
 jupyter notebook phenotype_complexity_analysis.ipynb
 ```
 
-## 📊 Understanding the Analysis
+## Understanding the Analysis
 
 ### What This Analysis Does
 
@@ -83,7 +83,7 @@ jupyter notebook phenotype_complexity_analysis.ipynb
 - The analysis uses dataset `normalized_phenopackets_07` which shows the largest ELDER advantage
 - Each disease is limited to max 10 cases to prevent bias from common diseases
 
-## 🔄 Reproducibility
+## Reproducibility
 
 ### Normalized Datasets
 
@@ -108,7 +108,7 @@ This will:
 2. Evaluate which dataset gives ELDER the biggest advantage
 3. Recommend which dataset to use for analysis
 
-## 🔧 Technical Details
+## Technical Details
 
 ### Input Data
 
@@ -131,14 +131,14 @@ This will:
 - **PNG Figure**: Raster format for presentations
 - **Console Output**: Detailed accuracy statistics per bin
 
-## 📚 Data Sources
+## Data Sources
 
 - **Phenopackets**: Sourced from published rare disease studies
 - **ELDER Results**: Generated using large3 embedding model with best-match cosine similarity
 - **Exomiser Results**: Generated using ontology-based ranking
 - **Performance Database**: Contains head-to-head comparisons for all 5,084 cases
 
-## 🆘 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -164,7 +164,7 @@ For issues with this analysis:
 3. Verify the database file is present and accessible
 4. Try running with a smaller dataset first
 
-## 📄 Citation
+## Citation
 
 If you use this analysis in your work, please cite:
 
@@ -172,6 +172,6 @@ If you use this analysis in your work, please cite:
 [Citation information will be added upon publication]
 ```
 
-## 📝 License
+## License
 
 This analysis code is provided under the same license as the main ELDER repository.
