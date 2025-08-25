@@ -36,7 +36,7 @@ pip install matplotlib numpy duckdb jupyter
 
 **⚠️ Important:** You need to download the DuckDB database separately from Zenodo:
 
-1. Download `Best_Match_Cosine_all_combined_Elder_vs_Exomiser.db` from: [ZENODO_LINK_HERE]
+1. Download `Best_Match_Cosine_all_combined_Elder_vs_Exomiser.db` from: https://zenodo.org/records/16944913
 2. Place it in the `data/` directory
 
 ### Running the Analysis

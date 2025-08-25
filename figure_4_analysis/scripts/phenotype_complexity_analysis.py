@@ -192,7 +192,8 @@ def main():
     
     if not Path(db_path).exists():
         print(f"Error: Database {db_path} not found!")
-        print("Please download the database from the Zenodo link provided in README.md")
+        print("Please download the database from: https://zenodo.org/records/16944913")
+        print("Place it in the ../data/ directory")
         return 1
     
     print(f"Running analysis on dataset: {dataset_name}")
