@@ -39,7 +39,6 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
     exomiser_per_case = {}
     file_to_disease = {}
     
-    # Count phenotypes per case and assign to bins
     for json_file in phenopacket_path.glob("*.json"):
         try:
             with open(json_file, 'r') as f:
@@ -77,7 +76,6 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
             print(f"Error processing {json_file}: {e}")
             continue
     
-    # Query database for performance data
     conn = duckdb.connect(db_path)
     
     all_files = []
@@ -111,7 +109,6 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
     
     conn.close()
     
-    # Calculate average top-1 accuracy for each bin
     elder_bin_accuracies = {}
     exomiser_bin_accuracies = {}
     
@@ -127,7 +124,6 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
             print(f"  ELDER avg top-1 accuracy: {elder_bin_accuracies[bin_name]:.3f}")
             print(f"  Ontology-only avg top-1 accuracy: {exomiser_bin_accuracies[bin_name]:.3f}")
     
-    # Create comparative plot
     plt.figure(figsize=(14, 8))
     bin_names = list(elder_bin_accuracies.keys())
     elder_accuracies = list(elder_bin_accuracies.values())
@@ -147,7 +143,6 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
     plt.xticks(x, bin_names)
     plt.legend()
     
-    # Add value labels on bars
     for bar, accuracy in zip(bars1, exomiser_accuracies):
         plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
                 f'{accuracy:.3f}', ha='center', va='bottom', fontweight='bold', fontsize=9)
@@ -159,7 +154,6 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
     plt.grid(True, alpha=0.3, axis='y')
     plt.tight_layout()
     
-    # Save plot
     output_dir = Path("../results")
     output_dir.mkdir(exist_ok=True)
     plt.savefig(output_dir / 'figure_4_phenotype_complexity.svg', bbox_inches='tight')
@@ -177,7 +171,6 @@ def main():
     else:
         dataset_name = sys.argv[1]
     
-    # Database path (will need to be provided separately via Zenodo)
     db_path = "../data/Best_Match_Cosine_all_combined_Elder_vs_Exomiser.db"
     
     if not Path(dataset_name).exists():
