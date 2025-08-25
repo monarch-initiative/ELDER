@@ -1,0 +1,5 @@
+matplotlib>=3.5.0
+numpy>=1.21.0
+duckdb>=0.8.0
+jupyter>=1.0.0
+notebook>=6.4.0
