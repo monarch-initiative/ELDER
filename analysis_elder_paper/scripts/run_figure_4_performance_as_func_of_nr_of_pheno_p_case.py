@@ -22,16 +22,24 @@ import duckdb
 
 def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path):
     """Analyze performance across phenotype complexity bins."""
+    # bins = {
+    #     "1-5": [],
+    #     "10-15": [],
+    #     "15-20": [],
+    #     "20-25": [],
+    #     "25-30": [],
+    #     "30-35": [],
+    #     "35-40": [],
+    #     "40-45": [],
+    #     "45+": [],
+    # }
+
     bins = {
-        "1-5": [],
-        "10-15": [],
-        "15-20": [],
-        "20-25": [],
-        "25-30": [],
-        "30-35": [],
-        "35-40": [],
-        "40-45": [],
-        "45+": [],
+        "1-10": [],
+        "10-20": [],
+        "20-30": [],
+        "30-40": [],
+        "40+": [],
     }
     
     phenopacket_path = Path(normalized_phenopacket_dir)
@@ -53,24 +61,34 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
                 phenotype_count = len(phenopacket['phenotypicFeatures'])
             
             filename = json_file.name
-            if 1 <= phenotype_count <= 5:
-                bins["1-5"].append(filename)
-            elif 10 <= phenotype_count <= 15:
-                bins["10-15"].append(filename)
-            elif 16 <= phenotype_count <= 20:
-                bins["15-20"].append(filename)
-            elif 21 <= phenotype_count <= 25:
-                bins["20-25"].append(filename)
-            elif 26 <= phenotype_count <= 30:
-                bins["25-30"].append(filename)
-            elif 31 <= phenotype_count <= 35:
-                bins["30-35"].append(filename)
-            elif 36 <= phenotype_count <= 40:
-                bins["35-40"].append(filename)
-            elif 41 <= phenotype_count <= 45:
-                bins["40-45"].append(filename)
-            elif phenotype_count > 45:
-                bins["45+"].append(filename)
+            # if 1 <= phenotype_count <= 5:
+            #     bins["1-5"].append(filename)
+            # elif 10 <= phenotype_count <= 15:
+            #     bins["10-15"].append(filename)
+            # elif 16 <= phenotype_count <= 20:
+            #     bins["15-20"].append(filename)
+            # elif 21 <= phenotype_count <= 25:
+            #     bins["20-25"].append(filename)
+            # elif 26 <= phenotype_count <= 30:
+            #     bins["25-30"].append(filename)
+            # elif 31 <= phenotype_count <= 35:
+            #     bins["30-35"].append(filename)
+            # elif 36 <= phenotype_count <= 40:
+            #     bins["35-40"].append(filename)
+            # elif 41 <= phenotype_count <= 45:
+            #     bins["40-45"].append(filename)
+            # elif phenotype_count > 45:
+            #     bins["45+"].append(filename)
+            if 1 <= phenotype_count <= 10:
+                bins["1-10"].append(filename)
+            elif 10 <= phenotype_count <= 20:
+                bins["10-20"].append(filename)
+            elif 21 <= phenotype_count <= 30:
+                bins["20-30"].append(filename)
+            elif 31 <= phenotype_count <= 40:
+                bins["30-40"].append(filename)
+            elif phenotype_count > 40:
+                bins["40+"].append(filename)
         
         except Exception as e:
             print(f"Error processing {json_file}: {e}")
@@ -156,8 +174,8 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
     
     output_dir = Path("../results")
     output_dir.mkdir(exist_ok=True)
-    plt.savefig(output_dir / 'figure_4_phenotype_complexity.svg', bbox_inches='tight')
-    plt.savefig(output_dir / 'figure_4_phenotype_complexity.png', dpi=300, bbox_inches='tight')
+    plt.savefig(output_dir / 'figure_4_performance_as_func_of_nr_of_pheno_p_case.svg', bbox_inches='tight')
+    plt.savefig(output_dir / 'figure_4_performance_as_func_of_nr_of_pheno_p_case.png', dpi=300, bbox_inches='tight')
     plt.show()
     
     return elder_per_case, exomiser_per_case, elder_bin_accuracies, exomiser_bin_accuracies
