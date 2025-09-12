@@ -3,7 +3,6 @@
 Create Normalized Datasets for Figure 4 Analysis
 
 This script creates 10 different normalized datasets with different random seeds
-and selects the one where ELDER performs best relative to Ontology-only approach.
 
 Usage:
     python create_normalized_datasets.py
@@ -50,13 +49,13 @@ def create_normalized_dataset(seed, dataset_name, source_dir):
         if len(files) > 10:
             diseases_dict[disease_id] = random.sample(files, 10)
     
-    # Create output directory
+    # output dir
     output_path = Path("../data") / dataset_name
     if output_path.exists():
         shutil.rmtree(output_path)
     output_path.mkdir(parents=True, exist_ok=True)
     
-    # Copy files
+    # copy files
     total_files = 0
     for disease_id, files in diseases_dict.items():
         for file_path in files:
@@ -115,7 +114,8 @@ def calculate_performance_difference(dataset_name, db_path):
 
 
 def create_and_evaluate_datasets():
-    """Create 10 datasets and find the one where ELDER performs best."""
+    """Create 10 datasets and evaluate them."""
+
     source_dir = "../data/phenopackets"
     db_path = "../data/Best_Match_Cosine_all_combined_Elder_vs_Exomiser.db"
     
@@ -168,10 +168,8 @@ def create_and_evaluate_datasets():
               f"Diff: {result['difference']:+.3f} {status}")
     
     best_dataset = results[0]
-    print(f"\n🏆 BEST DATASET: {best_dataset['dataset']}")
+    print(f"\n BEST DATASET: {best_dataset['dataset']}")
     print(f"   ELDER advantage: {best_dataset['difference']:+.3f}")
-    print(f"   Use this in your analysis: python phenotype_complexity_analysis.py ../data/{best_dataset['dataset']}")
-    
     return 0
 
 

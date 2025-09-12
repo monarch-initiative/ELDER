@@ -14,7 +14,6 @@ from figure_5_performance_as_func_of_nr_of_pheno_p_disease import (
 )
 
 def main():
-    # Set up paths
     script_dir = Path(__file__).parent
     data_dir = script_dir.parent / "data"
     results_dir = script_dir.parent / "results"

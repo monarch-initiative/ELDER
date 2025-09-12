@@ -22,17 +22,6 @@ import duckdb
 
 def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path):
     """Analyze performance across phenotype complexity bins."""
-    # bins = {
-    #     "1-5": [],
-    #     "10-15": [],
-    #     "15-20": [],
-    #     "20-25": [],
-    #     "25-30": [],
-    #     "30-35": [],
-    #     "35-40": [],
-    #     "40-45": [],
-    #     "45+": [],
-    # }
 
     bins = {
         "1-10": [],
@@ -61,24 +50,6 @@ def stratify_dataset_by_phenotypes_per_case(normalized_phenopacket_dir, db_path)
                 phenotype_count = len(phenopacket['phenotypicFeatures'])
             
             filename = json_file.name
-            # if 1 <= phenotype_count <= 5:
-            #     bins["1-5"].append(filename)
-            # elif 10 <= phenotype_count <= 15:
-            #     bins["10-15"].append(filename)
-            # elif 16 <= phenotype_count <= 20:
-            #     bins["15-20"].append(filename)
-            # elif 21 <= phenotype_count <= 25:
-            #     bins["20-25"].append(filename)
-            # elif 26 <= phenotype_count <= 30:
-            #     bins["25-30"].append(filename)
-            # elif 31 <= phenotype_count <= 35:
-            #     bins["30-35"].append(filename)
-            # elif 36 <= phenotype_count <= 40:
-            #     bins["35-40"].append(filename)
-            # elif 41 <= phenotype_count <= 45:
-            #     bins["40-45"].append(filename)
-            # elif phenotype_count > 45:
-            #     bins["45+"].append(filename)
             if 1 <= phenotype_count <= 10:
                 bins["1-10"].append(filename)
             elif 10 <= phenotype_count <= 20:
