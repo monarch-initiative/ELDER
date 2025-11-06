@@ -56,6 +56,7 @@ stats_ressources
 /exomiser_results/
 src/pheval_elder/main
 src/pheval_elder/main/**
+notes/
 
 # Data files
 *.json
