@@ -17,8 +17,8 @@ ELDER provides several strategies for analyzing phenotype terms:
 git clone https://github.com/monarch-initiative/ELDER.git
 cd ELDER
 
-# Install dependencies (Poetry will create and manage the virtual environment)
-poetry install
+# Install dependencies using uv
+uv sync
 ```
 
 ## Data Requirements
